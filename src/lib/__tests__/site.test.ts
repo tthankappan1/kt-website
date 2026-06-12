@@ -9,6 +9,9 @@ import {
   SITE_URL,
 } from '@/lib/site'
 
+// Deliberate change-detector tests: these values are LOCKED decisions from
+// PROJECT-STATUS.md. A failure here means "renegotiate the spec with the
+// owner", not "update the test to match the code".
 describe('site constants (PROJECT-STATUS locked decisions)', () => {
   it('has the 9 Client Resources items in locked order with production routes', () => {
     expect(CLIENT_RESOURCES.map((r) => r.label)).toEqual([

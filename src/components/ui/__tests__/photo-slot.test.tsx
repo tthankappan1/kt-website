@@ -1,10 +1,16 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { PhotoSlot } from '@/components/ui/photo-slot'
 
+// The manifest is mocked so this unit test never depends on the actual
+// contents of public/images (photos are owner-swappable content, not code).
+vi.mock('@/lib/images', () => ({
+  slotImageSrc: (id: string) =>
+    id === 'contact-portrait' ? '/images/contact-portrait.jpg' : null,
+}))
+
 describe('PhotoSlot (PHOTOS.md slot pipeline)', () => {
-  it('renders an optimized image when public/images/<id>.jpg exists', () => {
-    // contact-portrait.jpg is seeded from the design handoff
+  it('renders an optimized image when the slot has a file', () => {
     render(<PhotoSlot id="contact-portrait" alt="Kalyani Thilak, REALTOR" />)
     const img = screen.getByRole('img', { name: 'Kalyani Thilak, REALTOR' })
     expect(img).toBeInTheDocument()

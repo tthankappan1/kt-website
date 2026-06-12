@@ -13,7 +13,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // app code imports 'server-only', which throws outside RSC — neutralize in tests
+      // app code imports 'server-only', which throws outside RSC — neutralize in tests.
+      // Deliberately NOT resolve.conditions ['react-server']: react/react-dom honor
+      // that condition too and it would strip client hooks, breaking jsdom tests.
       'server-only': path.resolve(__dirname, './src/test/server-only-stub.ts'),
     },
   },

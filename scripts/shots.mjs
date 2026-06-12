@@ -37,7 +37,13 @@ const VIEWPORTS = [
 
 const [, , outDirArg, ...names] = process.argv
 const outDir = path.resolve(process.cwd(), outDirArg ?? 'shots/latest')
+const unknown = names.filter((n) => !PAGES.some((p) => p.name === n))
+if (unknown.length) {
+  console.error(`Unknown page name(s): ${unknown.join(', ')}\nValid: ${PAGES.map((p) => p.name).join(', ')}`)
+  process.exit(1)
+}
 const selected = names.length ? PAGES.filter((p) => names.includes(p.name)) : PAGES
+console.log(`Capturing ${selected.length} page(s) → ${outDir}`)
 
 const browser = await chromium.launch()
 try {
