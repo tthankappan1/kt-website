@@ -8,11 +8,28 @@
 // Requires: pnpm add -D playwright && pnpm exec playwright install chromium
 
 import { chromium } from 'playwright'
-import { mkdirSync } from 'node:fs'
+import { createReadStream, mkdirSync, existsSync } from 'node:fs'
+import { createServer } from 'node:http'
 import path from 'node:path'
 
 const DESIGN_DIR = path.resolve(process.cwd(), 'design_handoff_kt_website/design')
 const BASE = process.env.SHOTS_BASE_URL ?? 'http://localhost:3000'
+const PROTO_PORT = 8123
+
+// The prototype's in-browser Babel XHRs its .jsx files — blocked from file://
+// origins, so serve the design dir over a throwaway local HTTP server.
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.jsx': 'text/javascript', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml' }
+const protoServer = createServer((req, res) => {
+  const urlPath = decodeURIComponent(new URL(req.url, 'http://x').pathname)
+  const file = path.join(DESIGN_DIR, urlPath)
+  if (!file.startsWith(DESIGN_DIR) || !existsSync(file)) {
+    res.writeHead(404)
+    return res.end()
+  }
+  res.writeHead(200, { 'content-type': MIME[path.extname(file).toLowerCase()] ?? 'application/octet-stream' })
+  createReadStream(file).pipe(res)
+})
+await new Promise((resolve) => protoServer.listen(PROTO_PORT, '127.0.0.1', resolve))
 
 const PAGES = [
   { name: 'home', prototype: 'KT Home.html', route: '/' },
@@ -53,18 +70,25 @@ try {
     mkdirSync(outDir, { recursive: true })
     for (const p of selected) {
       const targets = [
-        { kind: 'prototype', url: `file://${path.join(DESIGN_DIR, p.prototype)}` },
+        { kind: 'prototype', url: `http://127.0.0.1:${PROTO_PORT}/${encodeURI(p.prototype)}` },
         { kind: 'built', url: `${BASE}${p.route}` },
       ]
       for (const t of targets) {
         try {
-          await page.goto(t.url, { waitUntil: 'networkidle', timeout: 30000 })
-          await page.waitForTimeout(800) // fonts + prototype babel settle
+          // 'networkidle' never settles on some pages; 'load' + explicit readiness is reliable.
+          await page.goto(t.url, { waitUntil: 'load', timeout: 30000 })
+          if (t.kind === 'prototype') {
+            // CDN React + in-browser Babel: wait until the app actually rendered.
+            await page.waitForSelector('#root > div', { timeout: 45000 })
+            await page.waitForTimeout(1500) // fonts + image slots settle
+          } else {
+            await page.waitForTimeout(1000)
+          }
           const file = path.join(outDir, `${p.name}--${t.kind}--${vp.tag}.png`)
           await page.screenshot({ path: file, fullPage: true })
           console.log(`✓ ${p.name} ${t.kind} ${vp.tag}`)
         } catch (err) {
-          console.error(`✗ ${p.name} ${t.kind} ${vp.tag}: ${err.message}`)
+          console.error(`✗ ${p.name} ${t.kind} ${vp.tag}: ${err.message.split('\n')[0]}`)
         }
       }
     }
@@ -72,4 +96,5 @@ try {
   }
 } finally {
   await browser.close()
+  protoServer.close()
 }
