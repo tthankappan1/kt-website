@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { CONTACT_PHONE_TEL } from '@/lib/site'
+import { CONTACT_PHONE_TEL, CONTACT_PHONE_DISPLAY } from '@/lib/site'
 
 const INTENTS = ['Selling', 'Buying', 'Both', 'Just curious'] as const
 const TIMEFRAMES = ['Ready now', 'In 3–6 months', 'This year', 'Just exploring'] as const
@@ -10,7 +10,7 @@ const NEWSLETTERS = [
   'Contra Costa County market updates',
 ] as const
 
-type FormState = 'idle' | 'sending' | 'fail' | 'sent'
+type FormState = 'idle' | 'sending' | 'sent'
 
 export function ContactForm() {
   const [intent, setIntent] = React.useState<string | null>(null)
@@ -42,11 +42,22 @@ export function ContactForm() {
     )
   }
 
+  // Simple email format check — mirrors KTNewsletter client-side validation
+  const isValidEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    // Re-entrancy guard: ignore if already sending
+    if (formState === 'sending') return
+
     if (!firstName.trim() || !email.trim()) {
       setError('Please add your first name and email so I can reply.')
+      return
+    }
+
+    if (!isValidEmail(email.trim())) {
+      setError('Please enter a valid email address.')
       return
     }
 
@@ -62,7 +73,7 @@ export function ContactForm() {
 
     const payload = {
       intent: intent ? intentMap[intent] : 'curious',
-      timeframe: timeframe ?? null,
+      timeframe: showTimeframe ? timeframe : null,
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: email.trim(),
@@ -101,7 +112,7 @@ export function ContactForm() {
           Your note is on its way &mdash; I personally read and answer every message, usually
           within a few hours. If it&rsquo;s time-sensitive, call or text me at{' '}
           <a href={`tel:${CONTACT_PHONE_TEL}`} style={{ color: 'var(--gold-deep)' }}>
-            (408)&nbsp;597-7371
+            {CONTACT_PHONE_DISPLAY}
           </a>
           .
         </p>
@@ -285,6 +296,8 @@ export function ContactForm() {
       {/* Validation error */}
       {error && (
         <p
+          role="alert"
+          aria-live="polite"
           style={{
             color: '#A4543C',
             fontFamily: 'var(--sans)',

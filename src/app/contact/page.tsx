@@ -4,6 +4,7 @@ import { NavSocial } from '@/components/nav/nav-social'
 import { PhotoSlot } from '@/components/ui/photo-slot'
 import { KTFooter } from '@/components/close/kt-footer'
 import { ContactForm } from '@/components/contact/contact-form'
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL, DRE, OFFICE_ADDRESS_LINES } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -47,21 +48,21 @@ export default function ContactPage() {
                 className="kt-body-small"
                 style={{ color: 'var(--body-on-light)', lineHeight: 2.1, marginTop: '12px' }}
               >
-                REALTOR&reg; &middot; DRE 02254890
+                REALTOR&reg; &middot; DRE {DRE}
                 <br />
                 Intero Real Estate Services
                 <br />
-                <a href="tel:+14085977371" style={{ color: 'var(--charcoal)', textDecoration: 'none' }}>
-                  (408) 597-7371
+                <a href={`tel:${CONTACT_PHONE_TEL}`} style={{ color: 'var(--charcoal)', textDecoration: 'none' }}>
+                  {CONTACT_PHONE_DISPLAY}
                 </a>
               </p>
               <p
                 className="kt-body-small"
                 style={{ color: 'var(--body-on-light)', lineHeight: 2.1, marginTop: '16px' }}
               >
-                187 S J Street
+                {OFFICE_ADDRESS_LINES[0]}
                 <br />
-                Livermore, CA 94550
+                {OFFICE_ADDRESS_LINES[1]}
               </p>
               <div style={{ marginTop: '24px' }}>
                 <NavSocial />

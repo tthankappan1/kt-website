@@ -14,7 +14,7 @@ describe('ContactForm', () => {
 
   it('timeframe section is hidden initially', () => {
     render(<ContactForm />)
-    expect(screen.queryByText("What's your timeframe?")).not.toBeInTheDocument()
+    expect(screen.queryByText("What’s your timeframe?")).not.toBeInTheDocument()
   })
 
   it('clicking Selling chip applies sel class and shows timeframe section', async () => {
@@ -238,6 +238,183 @@ describe('ContactForm', () => {
     expect(newsletterWrapper.style.flexDirection).toBe('column')
     expect(newsletterWrapper.style.gap).toBe('14px')
     expect(newsletterWrapper.style.marginBottom).toBe('40px')
+  })
+
+  // ── Issue 8: coverage gaps ────────────────────────────────────────────────
+
+  it('network error (fetch throws) shows failure error copy and keeps form (issue 8)', async () => {
+    const mockFetch = vi.fn().mockRejectedValue(new Error('Network error'))
+    vi.stubGlobal('fetch', mockFetch)
+
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    await user.type(screen.getByLabelText('First name'), 'Jane')
+    await user.type(screen.getByLabelText('Email'), 'jane@example.com')
+
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Something went wrong — please try again, or call me directly.'),
+      ).toBeInTheDocument()
+    })
+
+    // Form still present — not thank-you state
+    expect(screen.queryByText('Thank you.')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('First name')).toBeInTheDocument()
+  })
+
+  it('Send button is disabled while formState is sending (issue 8)', async () => {
+    let resolveFetch!: (value: unknown) => void
+    const fetchPromise = new Promise((resolve) => {
+      resolveFetch = resolve
+    })
+    const mockFetch = vi.fn().mockReturnValue(fetchPromise)
+    vi.stubGlobal('fetch', mockFetch)
+
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    await user.type(screen.getByLabelText('First name'), 'Jane')
+    await user.type(screen.getByLabelText('Email'), 'jane@example.com')
+
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled()
+    })
+
+    // Resolve to clean up
+    resolveFetch({ ok: true, json: async () => ({ ok: true }) })
+    await waitFor(() => {
+      expect(screen.getByText('Thank you.')).toBeInTheDocument()
+    })
+  })
+
+  it('filled honeypot value is forwarded in POST body (issue 8)', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true }),
+    })
+    vi.stubGlobal('fetch', mockFetch)
+
+    const user = userEvent.setup()
+    const { container } = render(<ContactForm />)
+
+    const honeypotInput = container.querySelector('input[name="website"]')!
+    // Use fireEvent for the hidden honeypot (tabIndex=-1 makes it skip with userEvent)
+    const { fireEvent: fireEventNative } = await import('@testing-library/react')
+    fireEventNative.change(honeypotInput, { target: { value: 'http://spam.example' } })
+
+    await user.type(screen.getByLabelText('First name'), 'Jane')
+    await user.type(screen.getByLabelText('Email'), 'jane@example.com')
+
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Thank you.')).toBeInTheDocument()
+    })
+
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(body.website).toBe('http://spam.example')
+  })
+
+  // ── Issue 5: email format validation ────────────────────────────────────
+  it('malformed email shows format hint error and does NOT call fetch (issue 5)', async () => {
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    await user.type(screen.getByLabelText('First name'), 'Jane')
+    await user.type(screen.getByLabelText('Email'), 'notanemail')
+
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    expect(
+      screen.getByText('Please enter a valid email address.'),
+    ).toBeInTheDocument()
+    expect(fetch).not.toHaveBeenCalled()
+  })
+
+  // ── Issue 6: aria-live on error paragraph ──────────────────────────────
+  it('error paragraph has role=alert so screen readers announce it (issue 6)', async () => {
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    const alert = screen.getByRole('alert')
+    expect(alert).toBeInTheDocument()
+    expect(alert.textContent).toContain('Please add your first name')
+  })
+
+  // ── Issue 3: timeframe gated in payload ───────────────────────────────
+  it('timeframe is null in payload when intent is Just curious (issue 3)', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true }),
+    })
+    vi.stubGlobal('fetch', mockFetch)
+
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    // Pick Selling and a timeframe
+    await user.click(screen.getByRole('button', { name: 'Selling' }))
+    await user.click(screen.getByRole('button', { name: 'Ready now' }))
+
+    // Switch to Just curious — timeframe section disappears
+    await user.click(screen.getByRole('button', { name: 'Just curious' }))
+
+    await user.type(screen.getByLabelText('First name'), 'Jane')
+    await user.type(screen.getByLabelText('Email'), 'jane@example.com')
+
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Thank you.')).toBeInTheDocument()
+    })
+
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(body.intent).toBe('curious')
+    expect(body.timeframe).toBeNull()
+  })
+
+  // ── Issue 4: re-entrancy guard ──────────────────────────────────────────
+  it('calling submit programmatically while already sending does not issue a second fetch (issue 4)', async () => {
+    let resolveFetch!: (value: unknown) => void
+    const fetchPromise = new Promise((resolve) => {
+      resolveFetch = resolve
+    })
+    const mockFetch = vi.fn().mockReturnValue(fetchPromise)
+    vi.stubGlobal('fetch', mockFetch)
+
+    const user = userEvent.setup()
+    const { container } = render(<ContactForm />)
+
+    await user.type(screen.getByLabelText('First name'), 'Jane')
+    await user.type(screen.getByLabelText('Email'), 'jane@example.com')
+
+    // First submission — puts form into 'sending'
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled()
+    })
+
+    // Directly submit the form while it is already sending
+    const form = container.querySelector('form')!
+    const { fireEvent: fireEventNative } = await import('@testing-library/react')
+    fireEventNative.submit(form)
+
+    // fetch must still have been called only once
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+
+    // Clean up
+    resolveFetch({ ok: true, json: async () => ({ ok: true }) })
+    await waitFor(() => {
+      expect(screen.getByText('Thank you.')).toBeInTheDocument()
+    })
   })
 
   it('switching intent preserves existing timeframe selection (issue 5)', async () => {
