@@ -11,7 +11,21 @@
 type Timestamps = number[]
 const store = new Map<string, Timestamps>()
 
+// Memory bounds: prune fully-expired buckets once the map grows past PRUNE_AT
+// (on EVERY path, not just allows, so a blocked-request flood can't grow it
+// unboundedly), and hard-evict oldest entries past MAX_KEYS as a backstop.
+const PRUNE_AT = 5000
+const MAX_KEYS = 20000
+
 export type RateLimitResult = { ok: boolean; retryAfterSec: number }
+
+function pruneExpired(windowStart: number): void {
+  for (const [k, ts] of store) {
+    const fresh = ts.filter((t) => t > windowStart)
+    if (fresh.length === 0) store.delete(k)
+    else store.set(k, fresh)
+  }
+}
 
 export function rateLimit(
   key: string,
@@ -19,6 +33,11 @@ export function rateLimit(
 ): RateLimitResult {
   const now = opts.now ?? Date.now()
   const windowStart = now - opts.windowMs
+
+  // Bound memory on every code path (a distinct-key flood is mostly blocked
+  // requests, which must not be allowed to grow the map without pruning).
+  if (store.size > PRUNE_AT) pruneExpired(windowStart)
+
   const recent = (store.get(key) ?? []).filter((t) => t > windowStart)
 
   if (recent.length >= opts.limit) {
@@ -31,19 +50,25 @@ export function rateLimit(
   recent.push(now)
   store.set(key, recent)
 
-  // Bounded-memory safety valve: prune empty/expired buckets if the map grows large.
-  if (store.size > 5000) {
-    for (const [k, ts] of store) {
-      const fresh = ts.filter((t) => t > windowStart)
-      if (fresh.length === 0) store.delete(k)
-      else store.set(k, fresh)
+  // Hard ceiling backstop: if still over cap after pruning, evict oldest-inserted
+  // keys (Map preserves insertion order) until under the limit.
+  if (store.size > MAX_KEYS) {
+    const overflow = store.size - MAX_KEYS
+    let removed = 0
+    for (const k of store.keys()) {
+      if (k === key || removed >= overflow) break
+      store.delete(k)
+      removed++
     }
   }
 
   return { ok: true, retryAfterSec: 0 }
 }
 
-/** Test seam. */
+/** Test seams. */
 export function resetRateLimitForTests() {
   store.clear()
+}
+export function rateLimitStoreSizeForTests(): number {
+  return store.size
 }

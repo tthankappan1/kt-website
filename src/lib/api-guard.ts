@@ -10,9 +10,22 @@ import { rateLimit } from './rate-limit'
 const MAX_BODY_BYTES = 16 * 1024 // 16KB — these payloads are tiny; larger is abuse
 
 export function clientIp(req: Request): string {
+  // Use platform-set, non-spoofable positions only. The LEFTMOST X-Forwarded-For
+  // token is supplied by the client and trivially rotated, so never key on it;
+  // prefer x-real-ip / x-vercel-forwarded-for (set by the edge), then the
+  // RIGHTMOST XFF hop (appended by the trusted proxy closest to us).
+  const real = req.headers.get('x-real-ip')
+  if (real) return real.trim()
+
+  const vercel = req.headers.get('x-vercel-forwarded-for')
+  if (vercel) return vercel.split(',')[0].trim()
+
   const xff = req.headers.get('x-forwarded-for')
-  if (xff) return xff.split(',')[0].trim()
-  return req.headers.get('x-real-ip') ?? 'unknown'
+  if (xff) {
+    const hops = xff.split(',').map((s) => s.trim()).filter(Boolean)
+    if (hops.length) return hops[hops.length - 1]
+  }
+  return 'unknown'
 }
 
 export function guardWrite(
