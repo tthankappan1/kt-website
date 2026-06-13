@@ -1,9 +1,10 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { KTNav } from '@/components/nav/kt-nav'
 import { KTFooter } from '@/components/close/kt-footer'
 import { Monogram } from '@/components/ui/monogram'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Page not found',
   robots: { index: false },
 }

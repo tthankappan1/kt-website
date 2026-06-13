@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import NotFound from '../not-found'
+import NotFound, { metadata } from '../not-found'
 
 // KTNav is a client component with scroll handler — stub to avoid JSDOM issues
 vi.mock('@/components/nav/kt-nav', () => ({
@@ -44,5 +44,11 @@ describe('NotFound page', () => {
     const link = screen.getByRole('link', { name: 'The Home Guide' })
     expect(link).toBeInTheDocument()
     expect(link).toHaveAttribute('href', '/home-guide')
+  })
+
+  it('exports metadata with robots noindex so 404 is excluded from search indexes', () => {
+    expect(metadata.title).toBe('Page not found')
+    const robots = metadata.robots as { index: boolean }
+    expect(robots.index).toBe(false)
   })
 })
