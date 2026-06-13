@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { resetRateLimitForTests } from '@/lib/rate-limit'
 
 // insertMock is the function we spy on per test
 const insertMock = vi.fn()
@@ -14,10 +15,10 @@ vi.mock('@/lib/supabase-admin', () => ({
 // Import after the mock is set up
 import { POST } from '../route'
 
-function makeRequest(body: unknown, malformed = false): Request {
+function makeRequest(body: unknown, malformed = false, headers?: Record<string, string>): Request {
   return new Request('http://test/api/newsletter', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
     body: malformed ? 'not-json{{{' : JSON.stringify(body),
   })
 }
@@ -25,6 +26,7 @@ function makeRequest(body: unknown, malformed = false): Request {
 describe('POST /api/newsletter', () => {
   beforeEach(() => {
     insertMock.mockReset()
+    resetRateLimitForTests()
   })
 
   afterEach(() => {
@@ -62,8 +64,8 @@ describe('POST /api/newsletter', () => {
     const body = await res.json()
     expect(res.status).toBe(400)
     expect(body.error).toBe('validation')
-    expect(body.issues).toBeDefined()
-    expect(Array.isArray(body.issues)).toBe(true)
+    // schema shape must NOT be leaked to the client
+    expect(body.issues).toBeUndefined()
     expect(insertMock).not.toHaveBeenCalled()
   })
 
@@ -112,5 +114,24 @@ describe('POST /api/newsletter', () => {
     expect(res.status).toBe(400)
     expect(body).toEqual({ error: 'invalid_json' })
     expect(insertMock).not.toHaveBeenCalled()
+  })
+
+  it('returns 415 when content-type is not JSON, no insert', async () => {
+    const req = makeRequest({ email: 'a@b.com' }, false, { 'Content-Type': 'text/plain' })
+    const res = await POST(req)
+    expect(res.status).toBe(415)
+    expect(insertMock).not.toHaveBeenCalled()
+  })
+
+  it('rate-limits a flood from one client (429 after the limit)', async () => {
+    insertMock.mockResolvedValue({ error: null })
+    const ip = { 'x-forwarded-for': '198.51.100.7' }
+    for (let i = 0; i < 5; i++) {
+      const res = await POST(makeRequest({ email: `u${i}@example.com` }, false, ip))
+      expect(res.status).toBe(200)
+    }
+    const blocked = await POST(makeRequest({ email: 'u6@example.com' }, false, ip))
+    expect(blocked.status).toBe(429)
+    expect(blocked.headers.get('Retry-After')).toBeTruthy()
   })
 })

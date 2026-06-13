@@ -22,7 +22,7 @@ describe('sitemap()', () => {
     vi.resetModules()
     // Simulate production: drafts must not appear.
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', '')
+    vi.stubEnv('SHOW_DRAFTS', '')
   })
 
   afterEach(() => {

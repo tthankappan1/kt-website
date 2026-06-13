@@ -49,7 +49,7 @@ describe('posts index', () => {
 
   it('production mode returns exactly the 2 real posts', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', '')
+    vi.stubEnv('SHOW_DRAFTS', '')
     const { getPublishedPosts } = await load()
     const published = getPublishedPosts()
     expect(published).toHaveLength(2)
@@ -61,16 +61,16 @@ describe('posts index', () => {
     expect(slugs[1]).toBe('two-markets-twenty-minutes')
   })
 
-  it('NEXT_PUBLIC_SHOW_DRAFTS=true (non-production) returns all posts', async () => {
+  it('SHOW_DRAFTS=true (non-production) returns all posts', async () => {
     vi.stubEnv('NODE_ENV', 'test')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
+    vi.stubEnv('SHOW_DRAFTS', 'true')
     const { allPosts, getPublishedPosts } = await load()
     expect(getPublishedPosts()).toHaveLength(allPosts.length)
   })
 
-  it('NEXT_PUBLIC_SHOW_DRAFTS=true is ignored when NODE_ENV=production — only real posts returned', async () => {
+  it('SHOW_DRAFTS=true is ignored when NODE_ENV=production — only real posts returned', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
+    vi.stubEnv('SHOW_DRAFTS', 'true')
     const { getPublishedPosts } = await load()
     const published = getPublishedPosts()
     const slugs = published.map(p => p.slug)
@@ -108,7 +108,7 @@ describe('posts index', () => {
 
   it('getPublishedPosts() returns a copy — mutating the result does not affect subsequent calls', async () => {
     vi.stubEnv('NODE_ENV', 'test')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
+    vi.stubEnv('SHOW_DRAFTS', 'true')
     const { getPublishedPosts } = await load()
     const first = getPublishedPosts()
     first.pop()
@@ -118,20 +118,20 @@ describe('posts index', () => {
 
   it('getPost returns undefined for unknown slug in production', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', '')
+    vi.stubEnv('SHOW_DRAFTS', '')
     const { getPost } = await load()
     expect(getPost('does-not-exist')).toBeUndefined()
   })
 
   it('getPost returns draft post only when drafts shown', async () => {
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', '')
+    vi.stubEnv('SHOW_DRAFTS', '')
     const { getPost: getProdPost } = await load()
     expect(getProdPost('spotlight-ruby-hill')).toBeUndefined()
 
     vi.resetModules()
     vi.stubEnv('NODE_ENV', 'test')
-    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
+    vi.stubEnv('SHOW_DRAFTS', 'true')
     const { getPost: getDevPost } = await load()
     expect(getDevPost('spotlight-ruby-hill')).toBeDefined()
   })

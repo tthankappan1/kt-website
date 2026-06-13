@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { resetRateLimitForTests } from '@/lib/rate-limit'
 
 // insertMock is the function we spy on per test
 const insertMock = vi.fn()
@@ -14,10 +15,10 @@ vi.mock('@/lib/supabase-admin', () => ({
 // Import after the mock is set up
 import { POST } from '../route'
 
-function makeRequest(body: unknown, malformed = false): Request {
+function makeRequest(body: unknown, malformed = false, headers?: Record<string, string>): Request {
   return new Request('http://test/api/lead', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
     body: malformed ? 'not-json{{{' : JSON.stringify(body),
   })
 }
@@ -31,6 +32,7 @@ const minimalValid = {
 describe('POST /api/lead', () => {
   beforeEach(() => {
     insertMock.mockReset()
+    resetRateLimitForTests()
   })
 
   afterEach(() => {
@@ -64,7 +66,8 @@ describe('POST /api/lead', () => {
     const body = await res.json()
     expect(res.status).toBe(400)
     expect(body.error).toBe('validation')
-    expect(Array.isArray(body.issues)).toBe(true)
+    // schema shape must NOT be leaked to the client
+    expect(body.issues).toBeUndefined()
     expect(insertMock).not.toHaveBeenCalled()
   })
 
@@ -145,5 +148,31 @@ describe('POST /api/lead', () => {
     expect(res.status).toBe(400)
     expect(body).toEqual({ error: 'invalid_json' })
     expect(insertMock).not.toHaveBeenCalled()
+  })
+
+  it('returns 415 when content-type is not JSON, no insert', async () => {
+    const req = makeRequest(minimalValid, false, { 'Content-Type': 'text/plain' })
+    const res = await POST(req)
+    expect(res.status).toBe(415)
+    expect(insertMock).not.toHaveBeenCalled()
+  })
+
+  it('returns 413 when the body exceeds the size cap, no insert', async () => {
+    const req = makeRequest({ ...minimalValid, message: 'x'.repeat(17_000) })
+    const res = await POST(req)
+    expect(res.status).toBe(413)
+    expect(insertMock).not.toHaveBeenCalled()
+  })
+
+  it('rate-limits a flood from one client (429 with Retry-After after the limit)', async () => {
+    insertMock.mockResolvedValue({ error: null })
+    const ip = { 'x-forwarded-for': '203.0.113.9' }
+    for (let i = 0; i < 5; i++) {
+      const res = await POST(makeRequest(minimalValid, false, ip))
+      expect(res.status).toBe(200)
+    }
+    const blocked = await POST(makeRequest(minimalValid, false, ip))
+    expect(blocked.status).toBe(429)
+    expect(blocked.headers.get('Retry-After')).toBeTruthy()
   })
 })

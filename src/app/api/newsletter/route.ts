@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import { NewsletterSchema } from '@/lib/validation'
+import { guardWrite, readLimitedJson, WRITE_RATE_LIMIT } from '@/lib/api-guard'
 
 export const runtime = 'nodejs'
 
 export async function POST(request: Request): Promise<NextResponse> {
-  // Parse JSON body — catch malformed JSON
-  let body: unknown
-  try {
-    body = await request.json()
-  } catch {
-    return NextResponse.json({ error: 'invalid_json' }, { status: 400 })
-  }
+  // Content-type + per-IP rate limit before any work.
+  const blocked = guardWrite(request, 'newsletter', WRITE_RATE_LIMIT)
+  if (blocked) return blocked
+
+  // Read body with a hard size cap, then parse (rejects 413 / 400 invalid_json).
+  const read = await readLimitedJson(request)
+  if (!read.ok) return read.response
+  const body = read.body
 
   // Honeypot check: silent drop before schema validation
   if (
@@ -24,13 +26,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: true }, { status: 200 })
   }
 
-  // Validate with Zod schema
+  // Validate with Zod schema. Generic error only — do not echo the schema shape.
   const parsed = NewsletterSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'validation', issues: parsed.error.issues },
-      { status: 400 },
-    )
+    return NextResponse.json({ error: 'validation' }, { status: 400 })
   }
 
   const { email, sourcePage } = parsed.data
@@ -47,8 +46,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (error.code === '23505') {
       return NextResponse.json({ ok: true }, { status: 200 })
     }
-    // All other DB errors: log but never leak details to client
-    console.error('[newsletter] insert error:', error)
+    // All other DB errors: log only code + message; never leak to client.
+    console.error('[newsletter] insert error:', error.code, error.message)
     return NextResponse.json({ error: 'server' }, { status: 500 })
   }
 
