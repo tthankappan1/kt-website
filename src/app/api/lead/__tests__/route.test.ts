@@ -69,6 +69,7 @@ describe('POST /api/lead', () => {
   })
 
   it('returns 400 validation error when firstName is missing', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { firstName: _omit, ...withoutFirst } = minimalValid
     const req = makeRequest(withoutFirst)
     const res = await POST(req)

@@ -27,9 +27,9 @@ export function ContactForm() {
 
   const showTimeframe = intent !== null && intent !== 'Just curious'
 
+  // Issue 5 fix: preserve timeframe across intent changes
   const toggleIntent = (val: string) => {
     setIntent((prev) => (prev === val ? null : val))
-    setTimeframe(null)
   }
 
   const toggleTimeframe = (val: string) => {
@@ -124,27 +124,28 @@ export function ContactForm() {
         />
       </span>
 
-      {/* Intent chips */}
-      <div className="kt-chips" role="group" aria-label="What brings you here?">
-        {INTENTS.map((val) => (
-          <button
-            key={val}
-            type="button"
-            className={'kt-chip' + (intent === val ? ' sel' : '')}
-            onClick={() => toggleIntent(val)}
-          >
-            {val}
-          </button>
-        ))}
+      {/* Intent chips — issue 1: visible label; issue 3: kt-field-label + inline flex; issue 4: marginBottom 36px */}
+      <div style={{ marginBottom: '36px' }}>
+        <span className="kt-field-label">What brings you here?</span>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {INTENTS.map((val) => (
+            <button
+              key={val}
+              type="button"
+              className={'kt-chip' + (intent === val ? ' sel' : '')}
+              onClick={() => toggleIntent(val)}
+            >
+              {val}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Timeframe chips — conditional */}
+      {/* Timeframe chips — conditional; issue 3: kt-field-label + inline flex; issue 4: marginBottom 36px */}
       {showTimeframe && (
-        <div style={{ marginTop: '20px' }}>
-          <p className="kt-label" style={{ marginBottom: '10px' }}>
-            What&rsquo;s your timeframe?
-          </p>
-          <div className="kt-chips" role="group" aria-label="Timeframe">
+        <div style={{ marginBottom: '36px' }}>
+          <span className="kt-field-label">What&rsquo;s your timeframe?</span>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             {TIMEFRAMES.map((val) => (
               <button
                 key={val}
@@ -159,17 +160,17 @@ export function ContactForm() {
         </div>
       )}
 
-      {/* Name grid */}
+      {/* Name grid — issue 3: kt-field-label; issue 4: marginBottom 28px */}
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '20px',
-          marginTop: '28px',
+          marginBottom: '28px',
         }}
       >
         <div>
-          <label className="kt-label" htmlFor="firstName">
+          <label className="kt-field-label" htmlFor="firstName">
             First name
           </label>
           <input
@@ -183,7 +184,7 @@ export function ContactForm() {
           />
         </div>
         <div>
-          <label className="kt-label" htmlFor="lastName">
+          <label className="kt-field-label" htmlFor="lastName">
             Last name <span className="opt">(optional)</span>
           </label>
           <input
@@ -198,17 +199,17 @@ export function ContactForm() {
         </div>
       </div>
 
-      {/* Contact grid */}
+      {/* Contact grid — issue 3: kt-field-label; issue 4: marginBottom 28px */}
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '20px',
-          marginTop: '20px',
+          marginBottom: '28px',
         }}
       >
         <div>
-          <label className="kt-label" htmlFor="email">
+          <label className="kt-field-label" htmlFor="email">
             Email
           </label>
           <input
@@ -222,7 +223,7 @@ export function ContactForm() {
           />
         </div>
         <div>
-          <label className="kt-label" htmlFor="phone">
+          <label className="kt-field-label" htmlFor="phone">
             Phone <span className="opt">(optional)</span>
           </label>
           <input
@@ -237,10 +238,10 @@ export function ContactForm() {
         </div>
       </div>
 
-      {/* Message */}
-      <div style={{ marginTop: '20px' }}>
-        <label className="kt-label" htmlFor="message">
-          Message
+      {/* Message — issue 2: byte-exact label copy; issue 3: kt-field-label; issue 4: marginBottom 28px */}
+      <div style={{ marginBottom: '28px' }}>
+        <label className="kt-field-label" htmlFor="message">
+          Anything you&rsquo;d like to share? <span className="opt">(optional)</span>
         </label>
         <textarea
           className="kt-input-light"
@@ -254,11 +255,11 @@ export function ContactForm() {
         />
       </div>
 
-      {/* Newsletters */}
-      <div style={{ marginTop: '24px' }}>
-        <p className="kt-label" style={{ marginBottom: '12px' }}>
+      {/* Newsletters — issue 3: kt-field-label; issue 4: flex column gap 14px marginBottom 40px */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '40px' }}>
+        <span className="kt-field-label">
           Monthly market updates <span className="opt">(optional)</span>
-        </p>
+        </span>
         {NEWSLETTERS.map((val) => (
           <label key={val} className="kt-check">
             <input

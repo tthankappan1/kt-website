@@ -129,4 +129,128 @@ describe('ContactForm', () => {
     expect(honeypot!.getAttribute('autocomplete')).toBe('off')
     expect(honeypot!.getAttribute('aria-hidden')).toBe('true')
   })
+
+  // ── Review-finding fixes ──────────────────────────────────────────────────
+
+  it('renders visible "What brings you here?" label text above intent chips (issue 1)', () => {
+    render(<ContactForm />)
+    expect(screen.getByText('What brings you here?')).toBeInTheDocument()
+  })
+
+  it('intent chip row wrapper has inline flex layout (issue 3)', () => {
+    const { container } = render(<ContactForm />)
+    // The div wrapping the intent chips must use inline display:flex
+    const intentChips = container.querySelectorAll('button.kt-chip')
+    expect(intentChips.length).toBeGreaterThan(0)
+    const chipRow = intentChips[0].parentElement!
+    expect(chipRow.style.display).toBe('flex')
+    expect(chipRow.style.gap).toBe('12px')
+    expect(chipRow.style.flexWrap).toBe('wrap')
+  })
+
+  it('renders message label as "Anything you’d like to share?" with (optional) span (issue 2)', () => {
+    const { container } = render(<ContactForm />)
+    const messageLabel = container.querySelector('label[for="message"]')
+    expect(messageLabel).not.toBeNull()
+    // Text content includes the full label
+    expect(messageLabel!.textContent).toContain('Anything you’d like to share?')
+    expect(messageLabel!.textContent).toContain('(optional)')
+    // The opt span is inside the label
+    const optSpan = messageLabel!.querySelector('.opt')
+    expect(optSpan).not.toBeNull()
+  })
+
+  it('all visible field labels use class kt-field-label (not kt-label) (issue 3)', () => {
+    const { container } = render(<ContactForm />)
+    // No element should have class kt-label
+    expect(container.querySelector('.kt-label')).toBeNull()
+    // Intent label span exists with kt-field-label
+    const fieldLabels = container.querySelectorAll('.kt-field-label')
+    expect(fieldLabels.length).toBeGreaterThan(0)
+  })
+
+  it('no element uses class kt-chips (issue 3)', () => {
+    const { container } = render(<ContactForm />)
+    expect(container.querySelector('.kt-chips')).toBeNull()
+  })
+
+  it('intent block wrapper has marginBottom 36px (issue 4)', () => {
+    render(<ContactForm />)
+    // The intent section wrapping div uses marginBottom: 36px
+    const intentLabel = screen.getByText('What brings you here?')
+    const intentWrapper = intentLabel.parentElement!
+    expect(intentWrapper.style.marginBottom).toBe('36px')
+  })
+
+  it('timeframe chip row wrapper has inline flex layout when visible (issue 3)', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<ContactForm />)
+    await user.click(screen.getByRole('button', { name: 'Selling' }))
+    const allChipRows = Array.from(container.querySelectorAll('button.kt-chip'))
+      .filter((b) => b.textContent === 'Ready now' || b.textContent === 'In 3–6 months')
+    expect(allChipRows.length).toBeGreaterThan(0)
+    const timeframeChipRow = allChipRows[0].parentElement!
+    expect(timeframeChipRow.style.display).toBe('flex')
+    expect(timeframeChipRow.style.gap).toBe('12px')
+  })
+
+  it('timeframe block wrapper has marginBottom 36px (issue 4)', async () => {
+    const user = userEvent.setup()
+    render(<ContactForm />)
+    await user.click(screen.getByRole('button', { name: 'Selling' }))
+    const timeframeLabel = screen.getByText("What’s your timeframe?")
+    const timeframeWrapper = timeframeLabel.parentElement!
+    expect(timeframeWrapper.style.marginBottom).toBe('36px')
+  })
+
+  it('name and contact grids use marginBottom 28px (issue 4)', () => {
+    const { container } = render(<ContactForm />)
+    const grids = container.querySelectorAll('div[style]')
+    const nameGrid = Array.from(grids).find((el) =>
+      el.querySelector('label[for="firstName"]'),
+    ) as HTMLElement | undefined
+    expect(nameGrid).toBeDefined()
+    expect(nameGrid!.style.marginBottom).toBe('28px')
+    const contactGrid = Array.from(grids).find((el) =>
+      el.querySelector('label[for="email"]'),
+    ) as HTMLElement | undefined
+    expect(contactGrid).toBeDefined()
+    expect(contactGrid!.style.marginBottom).toBe('28px')
+  })
+
+  it('message wrapper uses marginBottom 28px (issue 4)', () => {
+    const { container } = render(<ContactForm />)
+    const grids = container.querySelectorAll('div[style]')
+    const msgWrapper = Array.from(grids).find((el) =>
+      el.querySelector('label[for="message"]'),
+    ) as HTMLElement | undefined
+    expect(msgWrapper).toBeDefined()
+    expect(msgWrapper!.style.marginBottom).toBe('28px')
+  })
+
+  it('newsletter wrapper has flexDirection column, gap 14px, marginBottom 40px (issue 4)', () => {
+    render(<ContactForm />)
+    const newsletterLabel = screen.getByText((content, el) => {
+      return el?.className === 'kt-field-label' && content.includes('Monthly market updates')
+    })
+    const newsletterWrapper = newsletterLabel.parentElement!
+    expect(newsletterWrapper.style.display).toBe('flex')
+    expect(newsletterWrapper.style.flexDirection).toBe('column')
+    expect(newsletterWrapper.style.gap).toBe('14px')
+    expect(newsletterWrapper.style.marginBottom).toBe('40px')
+  })
+
+  it('switching intent preserves existing timeframe selection (issue 5)', async () => {
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    // Select Selling, then pick Ready now
+    await user.click(screen.getByRole('button', { name: 'Selling' }))
+    await user.click(screen.getByRole('button', { name: 'Ready now' }))
+    expect(screen.getByRole('button', { name: 'Ready now' }).className).toContain('sel')
+
+    // Switch to Buying — timeframe section must still show with Ready now still selected
+    await user.click(screen.getByRole('button', { name: 'Buying' }))
+    expect(screen.getByRole('button', { name: 'Ready now' }).className).toContain('sel')
+  })
 })
