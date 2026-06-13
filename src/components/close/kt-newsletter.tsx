@@ -22,7 +22,7 @@ export function KTNewsletter({ archiveLink = true }: { archiveLink?: boolean }) 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
-          sourcePage: typeof window !== 'undefined' ? window.location.pathname : '',
+          sourcePage: window.location.pathname,
           website: honeypot,
         }),
       })
@@ -49,30 +49,29 @@ export function KTNewsletter({ archiveLink = true }: { archiveLink?: boolean }) 
           ) : null}
         </div>
         <div>
-          {/* Visually hidden honeypot */}
-          <span className="kt-visually-hidden">
-            <input
-              name="website"
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden="true"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-            />
-          </span>
-
           {state === 'done' ? (
             <p style={{ color: 'var(--gold)', fontFamily: 'var(--serif)', fontSize: '18px' }}>
               You are on the list. Welcome.
             </p>
           ) : (
-            <form onSubmit={submit} style={{ display: 'flex', gap: '12px' }}>
+            <form onSubmit={submit} noValidate style={{ display: 'flex', gap: '12px' }}>
+              {/* Visually hidden honeypot — inside form so bots see it in form.elements */}
+              <span className="kt-visually-hidden">
+                <input
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                />
+              </span>
               <input
                 className="kt-input"
                 type="email"
                 placeholder="Email address"
                 value={email}
-                onChange={(e) => { setEmail(e.target.value); setState('idle') }}
+                onChange={(e) => { setEmail(e.target.value); if (state !== 'sending') setState('idle') }}
                 aria-label="Email address"
               />
               <button

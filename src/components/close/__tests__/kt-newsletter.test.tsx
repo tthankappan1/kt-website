@@ -15,7 +15,7 @@ describe('KTNewsletter', () => {
     render(<KTNewsletter />)
     const input = screen.getByLabelText('Email address')
     fireEvent.change(input, { target: { value: 'notanemail' } })
-    fireEvent.submit(input.closest('form')!)
+    fireEvent.click(screen.getByRole('button', { name: 'Sign up' }))
     expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument()
     expect(fetch).not.toHaveBeenCalled()
   })
@@ -102,6 +102,45 @@ describe('KTNewsletter', () => {
     expect(honeypot!.getAttribute('tabindex')).toBe('-1')
     expect(honeypot!.getAttribute('autocomplete')).toBe('off')
     expect(honeypot!.getAttribute('aria-hidden')).toBe('true')
+  })
+
+  it('honeypot is inside the form so bots see it in form.elements', () => {
+    const { container } = render(<KTNewsletter />)
+    const form = container.querySelector('form')!
+    const honeypot = form.querySelector('input[name="website"]')
+    expect(honeypot).toBeInTheDocument()
+  })
+
+  it('filled honeypot value is transmitted in POST body', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true }),
+    })
+    vi.stubGlobal('fetch', mockFetch)
+
+    const { container } = render(<KTNewsletter />)
+    const honeypotInput = container.querySelector('input[name="website"]')!
+    fireEvent.change(honeypotInput, { target: { value: 'http://spam.example' } })
+    fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'test@example.com' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Sign up' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('You are on the list. Welcome.')).toBeInTheDocument()
+    })
+
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(body.website).toBe('http://spam.example')
+  })
+
+  it('typing in the email field clears an existing error state', () => {
+    render(<KTNewsletter />)
+    const input = screen.getByLabelText('Email address')
+    fireEvent.change(input, { target: { value: 'notanemail' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Sign up' }))
+    expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument()
+
+    fireEvent.change(input, { target: { value: 'notanemail@' } })
+    expect(screen.queryByText('Please enter a valid email address.')).not.toBeInTheDocument()
   })
 
   it('button is disabled while sending', async () => {
