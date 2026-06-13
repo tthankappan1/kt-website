@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 
 type NewsletterState = 'idle' | 'error' | 'sending' | 'done' | 'fail'
 
@@ -45,7 +46,7 @@ export function KTNewsletter({ archiveLink = true }: { archiveLink?: boolean }) 
             One email a week. Where the <em className="kt-em">market</em> is, and what it means.
           </h2>
           {archiveLink ? (
-            <a className="kt-read" href="/home-guide" style={{ color: 'var(--gold)', display: 'inline-block', marginTop: '18px' }}>Browse past issues &rarr;</a>
+            <Link className="kt-read" href="/home-guide" style={{ color: 'var(--gold)', display: 'inline-block', marginTop: '18px' }}>Browse past issues &rarr;</Link>
           ) : null}
         </div>
         <div>
