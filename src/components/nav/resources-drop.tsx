@@ -33,11 +33,19 @@ export function ResourcesDrop() {
       <a
         className="kt-navlink"
         href="#resources"
+        role="button"
         aria-haspopup="true"
         aria-expanded={open}
+        aria-controls="kt-resources-menu"
         onClick={(e) => {
           e.preventDefault()
           setOpen(!open)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === ' ') {
+            e.preventDefault()
+            setOpen((prev) => !prev)
+          }
         }}
       >
         Client Resources
@@ -46,7 +54,7 @@ export function ResourcesDrop() {
         </svg>
       </a>
       <div className="kt-drop-wrap">
-        <div className="kt-drop-panel">
+        <div id="kt-resources-menu" className="kt-drop-panel">
           {CLIENT_RESOURCES.map((item) => (
             <Link key={item.label} className="kt-drop-item" href={item.href}>
               {item.label}

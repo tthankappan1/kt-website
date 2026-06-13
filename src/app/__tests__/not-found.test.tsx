@@ -46,9 +46,8 @@ describe('NotFound page', () => {
     expect(link).toHaveAttribute('href', '/home-guide')
   })
 
-  it('exports metadata with robots noindex so 404 is excluded from search indexes', () => {
+  it('exports metadata with the title (Next applies noindex to the not-found route by default)', () => {
     expect(metadata.title).toBe('Page not found')
-    const robots = metadata.robots as { index: boolean }
-    expect(robots.index).toBe(false)
+    expect(metadata.robots).toBeUndefined()
   })
 })

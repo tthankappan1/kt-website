@@ -320,7 +320,7 @@ export function ContactForm() {
       </button>
       <p
         className="kt-body-small"
-        style={{ marginTop: '16px', color: 'rgba(38,37,35,0.45)' }}
+        style={{ marginTop: '16px', color: 'rgba(38,37,35,0.62)' }}
       >
         No spam, no pressure &mdash; your details go only to Kalyani.
       </p>

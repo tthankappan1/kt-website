@@ -70,4 +70,11 @@ describe('Contact page assembly', () => {
     render(<ContactPage />)
     expect(screen.getByTestId('kt-footer')).toBeInTheDocument()
   })
+
+  it('renders exactly one <main id="main"> landmark', () => {
+    const { container } = render(<ContactPage />)
+    const mains = container.querySelectorAll('main')
+    expect(mains).toHaveLength(1)
+    expect(mains[0].id).toBe('main')
+  })
 })

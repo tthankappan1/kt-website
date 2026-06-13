@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Fraunces, Inter } from 'next/font/google'
+import { SITE_URL } from '@/lib/site'
 import './globals.css'
 
 // Brand-locked typography (CLAUDE.md hard rule): Fraunces display + Inter body.
@@ -19,7 +20,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://kalyanithilak.com'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Kalyani Thilak — Tri-Valley Real Estate',
     template: '%s — Kalyani Thilak',
@@ -33,7 +34,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        <a href="#main" className="kt-skip">
+          Skip to content
+        </a>
+        {children}
+      </body>
     </html>
   )
 }

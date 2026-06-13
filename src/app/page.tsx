@@ -7,14 +7,18 @@ import { KTSocialStrip } from '@/components/close/kt-social-strip'
 import { KTNewsletter } from '@/components/close/kt-newsletter'
 import { KTFooter } from '@/components/close/kt-footer'
 
+export const metadata = { alternates: { canonical: '/' } }
+
 export default function Home() {
   return (
     <div>
       <KTNav />
-      <HeroFull />
-      <KTIntro />
-      <KTServices />
-      <KTTestimonials />
+      <main id="main">
+        <HeroFull />
+        <KTIntro />
+        <KTServices />
+        <KTTestimonials />
+      </main>
       <div className="bg-dark on-dark" style={{ position: 'relative' }}>
         <KTSocialStrip />
         <KTNewsletter />

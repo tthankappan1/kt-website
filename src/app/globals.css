@@ -797,3 +797,10 @@ a.kt-bcard-link:hover .kt-bcard-title { color: var(--gold-deep); }
   white-space: nowrap;
   border: 0;
 }
+
+/* ---------- skip link + focus + reduced motion (net-new a11y) ---------- */
+.kt-skip{position:absolute;left:-9999px;top:0;z-index:100;}
+.kt-skip:focus{left:8px;top:8px;background:var(--charcoal);color:var(--ivory);padding:10px 18px;border:1px solid var(--gold);border-top-left-radius:12px;font-family:var(--sans);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;}
+.kt-input:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.kt-input-light:focus-visible{outline:2px solid var(--gold-deep);outline-offset:2px;}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important;}}

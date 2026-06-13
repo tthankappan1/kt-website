@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { KTNav } from '@/components/nav/kt-nav'
 import { KTFooter } from '@/components/close/kt-footer'
-import { CONTACT_EMAIL, DRE, SITE_URL } from '@/lib/site'
+import { CONTACT_EMAIL, DRE } from '@/lib/site'
 
 // DRAFT privacy policy — review by legal counsel before go-live (README §9).
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
     'How kalyanithilak.com collects, uses, and protects your personal information, and your California privacy rights.',
-  alternates: { canonical: `${SITE_URL}/privacy` },
+  alternates: { canonical: '/privacy' },
   robots: { index: false },
 }
 
@@ -18,6 +18,7 @@ export default function PrivacyPage() {
     <div>
       <KTNav base="/" />
 
+      <main id="main">
       <header id="top" className="bg-dark on-dark" style={{ padding: '160px 0 64px' }}>
         <div className="kt-container">
           <p className="kt-eyebrow on-dark">Legal</p>
@@ -157,6 +158,7 @@ export default function PrivacyPage() {
 
         </div>
       </section>
+      </main>
 
       <div className="bg-dark on-dark" style={{ position: 'relative' }}>
         <KTFooter />

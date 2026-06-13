@@ -48,4 +48,11 @@ describe('Privacy Policy page', () => {
     render(<PrivacyPage />)
     expect(screen.getByText(/june 12, 2026/i)).toBeInTheDocument()
   })
+
+  it('renders exactly one <main id="main"> landmark', () => {
+    const { container } = render(<PrivacyPage />)
+    const mains = container.querySelectorAll('main')
+    expect(mains).toHaveLength(1)
+    expect(mains[0].id).toBe('main')
+  })
 })

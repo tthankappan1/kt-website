@@ -32,6 +32,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    alternates: { canonical: '/home-guide/' + slug },
     openGraph: {
       title,
       description,
@@ -62,6 +63,7 @@ export default async function PostPage({
     <div>
       <KTNav base="/" />
 
+      <main id="main">
       <header className="bg-dark on-dark" style={{ padding: '170px 0 72px' }}>
         <div className="kt-container">
           <Link className="kt-read" href="/home-guide" style={{ color: 'var(--gold)' }}>
@@ -141,6 +143,7 @@ export default async function PostPage({
           </div>
         </div>
       </div>
+      </main>
 
       <div className="bg-dark on-dark" style={{ position: 'relative' }}>
         <KTNewsletter />

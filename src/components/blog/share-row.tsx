@@ -100,7 +100,7 @@ export function ShareRow({ slug, title }: { slug: string; title: string }) {
         <button
           className={'kt-share-btn sb-copy' + (copied ? ' copied' : '')}
           onClick={copy}
-          aria-label="Copy link"
+          aria-label={copied ? 'Link copied' : 'Copy link'}
           title="Copy a plain URL to paste anywhere"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

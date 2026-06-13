@@ -63,7 +63,15 @@ export function BlogArchive({ posts }: { posts: Post[] }) {
 
   const jump = (key: string) => {
     const el = document.querySelector<HTMLElement>('[data-mkey="' + key + '"]')
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 140, behavior: 'smooth' })
+    if (el) {
+      const reduce =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      window.scrollTo({
+        top: el.getBoundingClientRect().top + window.scrollY - 140,
+        behavior: reduce ? 'auto' : 'smooth',
+      })
+    }
   }
 
   return (

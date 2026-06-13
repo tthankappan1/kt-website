@@ -118,6 +118,11 @@ describe('generateMetadata', () => {
     expect(og?.type).toBe('article')
   })
 
+  it('sets alternates.canonical to the slug path', async () => {
+    const meta = await generateMetadata({ params: Promise.resolve({ slug: 'middle-post' }) })
+    expect(meta.alternates?.canonical).toBe('/home-guide/middle-post')
+  })
+
   it('returns empty object for unknown slug', async () => {
     const meta = await generateMetadata({ params: Promise.resolve({ slug: 'nonexistent' }) })
     expect(meta).toEqual({})

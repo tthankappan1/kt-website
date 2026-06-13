@@ -6,7 +6,6 @@ import { Monogram } from '@/components/ui/monogram'
 
 export const metadata: Metadata = {
   title: 'Page not found',
-  robots: { index: false },
 }
 
 export default function NotFound() {
@@ -14,6 +13,7 @@ export default function NotFound() {
     <div>
       <KTNav base="/" />
       <main
+        id="main"
         className="bg-dark on-dark"
         style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', position: 'relative' }}
       >

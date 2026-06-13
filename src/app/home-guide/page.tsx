@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: 'The Bay Area Home Guide',
   description:
     'Every issue of the weekly newsletter — the market read, neighborhood spotlights, and what the numbers actually mean for Tri-Valley buyers and sellers.',
+  alternates: { canonical: '/home-guide' },
 }
 
 export default function HomeGuidePage() {
@@ -19,11 +20,13 @@ export default function HomeGuidePage() {
   return (
     <div>
       <KTNav base="/" />
-      <BlogHero />
-      <div className="bg-light">
-        <BlogFeatured posts={posts} />
-        <BlogArchive posts={posts} />
-      </div>
+      <main id="main">
+        <BlogHero />
+        <div className="bg-light">
+          <BlogFeatured posts={posts} />
+          <BlogArchive posts={posts} />
+        </div>
+      </main>
       <div className="bg-dark on-dark" style={{ position: 'relative' }}>
         <KTNewsletter archiveLink={false} />
         <KTFooter />

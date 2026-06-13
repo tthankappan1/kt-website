@@ -72,12 +72,14 @@ export function ResourcePageView({ page }: { page: string }) {
   return (
     <div>
       <KTNav base="/" />
+      <main id="main">
       <ResourceHero title={d.title} sub={d.sub} />
       <div className="bg-light">
         {d.sections.map((s, i) => (
           <ResourceSection key={i} s={s} alt={i % 2 === 1} />
         ))}
       </div>
+      </main>
       <div className="bg-dark on-dark" style={{ position: 'relative' }}>
         <KTNewsletter />
         <KTFooter />

@@ -61,4 +61,11 @@ describe('Home page assembly', () => {
     render(<Home />)
     expect(screen.getByTestId('kt-footer')).toBeInTheDocument()
   })
+
+  it('renders exactly one <main id="main"> landmark', () => {
+    const { container } = render(<Home />)
+    const mains = container.querySelectorAll('main')
+    expect(mains).toHaveLength(1)
+    expect(mains[0].id).toBe('main')
+  })
 })

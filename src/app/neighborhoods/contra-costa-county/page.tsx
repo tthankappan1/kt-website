@@ -5,6 +5,7 @@ import { GuidePageView } from '@/components/guide/guide-page'
 export const metadata: Metadata = {
   title: CONTRA_COSTA_GUIDE.title,
   description: CONTRA_COSTA_GUIDE.sub,
+  alternates: { canonical: '/neighborhoods/contra-costa-county' },
 }
 
 export default function ContraCostaCountyPage() {

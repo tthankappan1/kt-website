@@ -10,12 +10,14 @@ export const metadata: Metadata = {
   title: 'Contact',
   description:
     'Buying, selling, or just curious about the market? Tell Kalyani a little about where you are.',
+  alternates: { canonical: '/contact' },
 }
 
 export default function ContactPage() {
   return (
     <div>
       <KTNav base="/" />
+      <main id="main">
       <header id="top" className="bg-dark on-dark" style={{ padding: '160px 0 64px' }}>
         <div className="kt-container">
           <p className="kt-eyebrow on-dark">Contact</p>
@@ -78,6 +80,7 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+      </main>
       <div className="bg-dark on-dark" style={{ position: 'relative' }}>
         <KTFooter />
       </div>

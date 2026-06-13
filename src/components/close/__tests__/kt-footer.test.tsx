@@ -57,9 +57,9 @@ describe('KTFooter', () => {
     )
   })
 
-  it('renders a footer element with id="contact"', () => {
+  it('renders a footer element without the orphaned id="contact"', () => {
     const { container } = render(<KTFooter />)
-    const footer = container.querySelector('footer#contact')
-    expect(footer).toBeInTheDocument()
+    expect(container.querySelector('footer')).toBeInTheDocument()
+    expect(container.querySelector('footer#contact')).toBeNull()
   })
 })

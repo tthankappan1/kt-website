@@ -106,4 +106,23 @@ describe('ShareRow', () => {
     expect(screen.getByText('Copy link')).toBeInTheDocument()
     expect(btn.className).not.toContain('copied')
   })
+
+  it('copy button aria-label is "Copy link" initially and flips to "Link copied" after click', async () => {
+    render(<ShareRow slug={TEST_SLUG} title={TEST_TITLE} />)
+    const btn = screen.getByRole('button', { name: 'Copy link' })
+    expect(btn.getAttribute('aria-label')).toBe('Copy link')
+
+    await act(async () => {
+      fireEvent.click(btn)
+      await Promise.resolve()
+    })
+
+    expect(btn.getAttribute('aria-label')).toBe('Link copied')
+
+    // Reverts after the 2200ms timeout
+    await act(async () => {
+      vi.advanceTimersByTime(2200)
+    })
+    expect(btn.getAttribute('aria-label')).toBe('Copy link')
+  })
 })

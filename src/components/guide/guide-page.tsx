@@ -126,6 +126,7 @@ export function GuidePageView({ guide }: { guide: Guide }) {
   return (
     <div>
       <KTNav base="/" />
+      <main id="main">
       <GuideHero
         eyebrow={eyebrow}
         title={title}
@@ -148,6 +149,7 @@ export function GuidePageView({ guide }: { guide: Guide }) {
           <CityRow key={c.id} city={c} alt={i % 2 === 0} />
         ))}
       </div>
+      </main>
       <div className="bg-dark on-dark" style={{ position: 'relative' }}>
         <KTNewsletter />
         <KTFooter />

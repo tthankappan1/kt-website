@@ -27,6 +27,13 @@ export function KTTestimonials() {
   const [idx, setIdx] = useState(0)
 
   useEffect(() => {
+    // Respect reduced-motion: do not auto-advance; dots remain for manual control.
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      return
+    }
     const id = setInterval(() => {
       setIdx((prev) => (prev + 1) % KT_QUOTES.length)
     }, 7000)

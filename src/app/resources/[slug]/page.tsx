@@ -17,7 +17,7 @@ export async function generateMetadata({
   const { slug } = await params
   const p = RESOURCE_PAGES[slug]
   if (!p) return {}
-  return { title: p.title, description: p.sub }
+  return { title: p.title, description: p.sub, alternates: { canonical: '/resources/' + slug } }
 }
 
 export default async function ResourceSlugPage({
