@@ -8,7 +8,7 @@ export const post: Post = {
   date: '2026-05-26',
   cover: true,
   draft: true,
-  excerpt: `Behind the gates of Pleasanton's best-known golf community: what actually drives value here, and what buyers consistently misjudge.`,
+  excerpt: `Behind the gates of Pleasanton’s best-known golf community: what actually drives value here, and what buyers consistently misjudge.`,
   body: [
     `Ruby Hill is the address people name when they talk about luxury in the Tri-Valley — a gated community wrapped around a Jack Nicklaus course, with custom homes on lots you simply cannot find elsewhere in Pleasanton.`,
     `But the market inside the gates behaves differently than the headline numbers suggest. Lot position matters enormously: course frontage, vineyard views, and cul-de-sac placement can separate two similar floor plans by seven figures.`,

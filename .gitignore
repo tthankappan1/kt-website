@@ -21,5 +21,8 @@ shots/
 *.pem
 *.tsbuildinfo
 
+# local font cache (project uses next/font/google — TTF not committed)
+src/assets/
+
 # vercel
 .vercel
