@@ -50,6 +50,12 @@ prototype). The production site recreates it 1:1. The build spec is
   = README §7 exactly). RLS on, NO anon policies; writes only through the
   route handlers with the service-role key (server-only). Zod-validate
   everything; honeypot field `website` on both forms.
+- **Supabase keys: use the LEGACY JWT keys** (`anon` + `service_role` from the
+  dashboard's "Legacy API Keys" tab), NOT the new `sb_publishable_`/`sb_secret_`
+  keys — decided after a prior project had issues with the new keys. The
+  service-role key bypasses RLS (the only write path); the anon key respects RLS
+  (and is currently unused in code). `getSupabaseAdmin()` throws at startup if an
+  anon/publishable key is mistakenly placed in the service-role slot.
   - Known conflict, decided: the contact form's optional lastName/phone have
     no §7 columns — the route appends them to `message` in a delimited block.
 - Blog section name locked: **"Home Guide"**. Posts are typed TS files in

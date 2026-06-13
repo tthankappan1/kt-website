@@ -45,6 +45,9 @@ Read-only audit across 4 lenses (API/abuse, secrets/RLS, XSS/client, headers/dep
 
 **Infrastructure (you provision; code is ready):**
 1. **Supabase** — create the project, run `supabase/migrations/0001_leads_newsletter.sql`, set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (see `.env.local.example`). Then lead + newsletter submissions land live.
+   - **Use the LEGACY API keys** (Dashboard → Settings → API → **Legacy API Keys**): the JWT-format `anon` and `service_role` keys. The codebase is wired for the legacy `anon`+`service_role` scheme (a prior project hit issues with the new `sb_publishable_…`/`sb_secret_…` keys). The code is format-agnostic so a new `sb_secret_…` would technically work, but stay on legacy as decided.
+   - `SUPABASE_SERVICE_ROLE_KEY` **must** be the `service_role` key — it BYPASSES RLS and is the only write path. Pasting the `anon` key here makes every insert fail the RLS check; the app now throws a clear startup error if it detects an anon/publishable key in that slot (`src/lib/supabase-admin.ts` → `assertServiceRoleKey`).
+   - RLS is enabled with **no policies** (migration), so the public `anon` key can neither read nor write — exactly as intended.
 2. **Vercel** — import the GitHub repo, add the same env vars, add domain `kalyanithilak.com`.
 3. _(Optional)_ **Resend** — `RESEND_API_KEY` if you want new-lead email notifications (not wired yet).
 4. _(Optional, recommended at scale)_ **Upstash** — for distributed rate limiting.
