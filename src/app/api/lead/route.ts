@@ -4,6 +4,7 @@ import { LeadSchema } from '@/lib/validation'
 import { guardWrite, readLimitedJson, WRITE_RATE_LIMIT } from '@/lib/api-guard'
 
 export const runtime = 'nodejs'
+export const maxDuration = 10 // bound a hung Supabase call (one tiny insert; normally <1s)
 
 export async function POST(request: Request): Promise<NextResponse> {
   // Content-type + per-IP rate limit before any work.
