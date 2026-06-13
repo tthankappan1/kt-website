@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { CONTRA_COSTA_GUIDE } from '@/content/guides'
-import { NeighborhoodGuidePage } from '@/components/neighborhoods/neighborhood-guide-page'
+import { GuidePageView } from '@/components/guide/guide-page'
 
 export const metadata: Metadata = {
   title: CONTRA_COSTA_GUIDE.title,
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function ContraCostaCountyPage() {
-  return <NeighborhoodGuidePage guide={CONTRA_COSTA_GUIDE} />
+  return <GuidePageView guide={CONTRA_COSTA_GUIDE} />
 }
