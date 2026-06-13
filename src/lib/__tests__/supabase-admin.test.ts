@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   assertSecretKey,
   getSupabaseAdmin,
+  normalizeSupabaseUrl,
   resetSupabaseAdminForTests,
 } from '@/lib/supabase-admin'
 
@@ -38,6 +39,44 @@ describe('getSupabaseAdmin', () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://example.supabase.co')
     vi.stubEnv('SUPABASE_SECRET_KEY', 'sb_publishable_oops')
     expect(() => getSupabaseAdmin()).toThrow(/PUBLISHABLE key/)
+  })
+
+  it('tolerates the REST-endpoint URL (…/rest/v1/) by normalizing to the origin', () => {
+    // The dashboard surfaces this form; supabase-js appends /rest/v1 itself, so
+    // an un-normalized value yields a doubled path → PostgREST PGRST125.
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://example.supabase.co/rest/v1/')
+    vi.stubEnv('SUPABASE_SECRET_KEY', 'sb_secret_test123')
+    expect(() => getSupabaseAdmin()).not.toThrow()
+  })
+})
+
+describe('normalizeSupabaseUrl (URL-misconfiguration guard)', () => {
+  it('leaves a bare Project URL unchanged', () => {
+    expect(normalizeSupabaseUrl('https://example.supabase.co')).toBe(
+      'https://example.supabase.co',
+    )
+  })
+
+  it('strips a trailing slash', () => {
+    expect(normalizeSupabaseUrl('https://example.supabase.co/')).toBe(
+      'https://example.supabase.co',
+    )
+  })
+
+  it('strips the /rest/v1/ REST-endpoint path to the origin', () => {
+    expect(normalizeSupabaseUrl('https://example.supabase.co/rest/v1/')).toBe(
+      'https://example.supabase.co',
+    )
+  })
+
+  it('trims surrounding whitespace (copy-paste artifact)', () => {
+    expect(normalizeSupabaseUrl('  https://example.supabase.co  ')).toBe(
+      'https://example.supabase.co',
+    )
+  })
+
+  it('throws a clear error on a non-URL value', () => {
+    expect(() => normalizeSupabaseUrl('not a url')).toThrow(/not a valid URL/)
   })
 })
 

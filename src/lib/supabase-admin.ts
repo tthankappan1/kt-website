@@ -49,6 +49,24 @@ export function assertSecretKey(key: string): void {
   }
 }
 
+/**
+ * Reduce a Supabase URL to its bare origin. supabase-js appends `/rest/v1`,
+ * `/auth/v1`, etc. itself, so it must receive the Project URL with no path. The
+ * dashboard also surfaces the REST-endpoint form (`…/rest/v1/`); pasting that
+ * yields a doubled path and PostgREST rejects every request with PGRST125
+ * ("Invalid path specified in request URL"). Normalizing here makes the bare
+ * Project URL, a trailing slash, and the REST endpoint all resolve correctly.
+ */
+export function normalizeSupabaseUrl(raw: string): string {
+  try {
+    return new URL(raw.trim()).origin
+  } catch {
+    throw new Error(
+      `NEXT_PUBLIC_SUPABASE_URL is not a valid URL: "${raw}". Use the Project URL from Dashboard → Settings → API (e.g. https://xxxx.supabase.co).`,
+    )
+  }
+}
+
 export function getSupabaseAdmin(): SupabaseClient {
   if (client) return client
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -59,7 +77,7 @@ export function getSupabaseAdmin(): SupabaseClient {
     )
   }
   assertSecretKey(secretKey)
-  client = createClient(url, secretKey, {
+  client = createClient(normalizeSupabaseUrl(url), secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
   return client
