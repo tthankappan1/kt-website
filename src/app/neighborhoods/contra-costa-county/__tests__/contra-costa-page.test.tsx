@@ -81,6 +81,12 @@ describe('Contra Costa County Neighborhoods page', () => {
     expect(screen.getByTestId('photo-slot-guide-contracosta-hero')).toBeInTheDocument()
   })
 
+  it('hero photo slot alt comes from Guide.placeholder', () => {
+    render(<ContraCostaPage />)
+    const slot = screen.getByTestId('photo-slot-guide-contracosta-hero')
+    expect(slot.getAttribute('aria-label')).toBe('Mt. Diablo or the 680 corridor hills')
+  })
+
   it('renders "The Neighborhoods" heading', () => {
     render(<ContraCostaPage />)
     expect(screen.getByRole('heading', { name: /The Neighborhoods/i })).toBeInTheDocument()

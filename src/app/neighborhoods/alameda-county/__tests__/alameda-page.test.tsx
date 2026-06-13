@@ -77,6 +77,12 @@ describe('Alameda County Neighborhoods page', () => {
     expect(screen.getByTestId('photo-slot-guide-alameda-hero')).toBeInTheDocument()
   })
 
+  it('hero photo slot alt comes from Guide.placeholder', () => {
+    render(<AlamedaPage />)
+    const slot = screen.getByTestId('photo-slot-guide-alameda-hero')
+    expect(slot.getAttribute('aria-label')).toBe('Tri-Valley hills or Pleasanton Main Street')
+  })
+
   it('renders "The Neighborhoods" heading', () => {
     render(<AlamedaPage />)
     expect(screen.getByRole('heading', { name: /The Neighborhoods/i })).toBeInTheDocument()
