@@ -115,7 +115,7 @@ create table newsletter_signups (
 create unique index newsletter_signups_email_idx on newsletter_signups (lower(email));
 ```
 
-- **RLS enabled on both tables, NO anon policies.** All writes go through a server route handler (or server action) using the service-role key — never expose the service key client-side, never allow anon inserts directly.
+- **RLS enabled on both tables, NO policies.** All writes go through a server route handler (or server action) using the Supabase **secret key** (`sb_secret_…`, `service_role` role — the build uses the new API keys, not legacy; see `docs/HANDOFF.md`) — never expose the secret key client-side, never allow publishable/anon inserts directly.
 - Zod-validate the payload in the route before insert; rate-limit lightly (honeypot field is enough for v1).
 - The prototype's `window.KT_CRM.submit()` and `localStorage['kt-leads']` queue is the seam to replace — same payload shape as the `leads` table.
 - Optional v1: on new lead, send Kalyani a notification email via Resend.

@@ -57,7 +57,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     finalMessage = (finalMessage ? finalMessage + '\n\n' : '') + '—\n' + extras.join('\n')
   }
 
-  // Insert into leads via service-role client
+  // Insert into leads via the secret-key admin client (service_role, bypasses RLS)
   const supabase = getSupabaseAdmin()
   const { error } = await supabase.from('leads').insert({
     intent,

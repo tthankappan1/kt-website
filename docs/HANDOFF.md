@@ -14,7 +14,7 @@ A production, static-first Next.js 15 site recreating the hi-fi prototype 1:1, b
 | Home Guide blog: index, 2 real posts, share row, per-post OG images | ✅ |
 | 7 resource pages + 2 neighborhood guides (data-driven) | ✅ |
 | Favicon, 404, privacy (CCPA draft), sitemap.xml, robots.txt | ✅ |
-| Supabase lead + newsletter capture (RLS on, service-role server route, Zod) | ✅ (code) |
+| Supabase lead + newsletter capture (RLS on, secret-key server route, Zod) | ✅ (code) |
 | Security review + M1/M2/M3 remediation | ✅ |
 
 - **28 routes** prerendered static; only `/api/lead` + `/api/newsletter` are server code.
@@ -44,10 +44,11 @@ Read-only audit across 4 lenses (API/abuse, secrets/RLS, XSS/client, headers/dep
 ## Owner tasks before go-live
 
 **Infrastructure (you provision; code is ready):**
-1. **Supabase** — create the project, run `supabase/migrations/0001_leads_newsletter.sql`, set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (see `.env.local.example`). Then lead + newsletter submissions land live.
-   - **Use the LEGACY API keys** (Dashboard → Settings → API → **Legacy API Keys**): the JWT-format `anon` and `service_role` keys. The codebase is wired for the legacy `anon`+`service_role` scheme (a prior project hit issues with the new `sb_publishable_…`/`sb_secret_…` keys). The code is format-agnostic so a new `sb_secret_…` would technically work, but stay on legacy as decided.
-   - `SUPABASE_SERVICE_ROLE_KEY` **must** be the `service_role` key — it BYPASSES RLS and is the only write path. Pasting the `anon` key here makes every insert fail the RLS check; the app now throws a clear startup error if it detects an anon/publishable key in that slot (`src/lib/supabase-admin.ts` → `assertServiceRoleKey`).
-   - RLS is enabled with **no policies** (migration), so the public `anon` key can neither read nor write — exactly as intended.
+1. **Supabase** — create the project, run `supabase/migrations/0001_leads_newsletter.sql`, set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` (see `.env.local.example`). Then lead + newsletter submissions land live.
+   - **Use the NEW API keys** (Dashboard → **Settings → API Keys**; click "Create new API keys" if needed): copy the **Publishable key** (`sb_publishable_…`) and a **Secret key** (`sb_secret_…`). This is the day-one decision — do NOT use the deprecated legacy `anon`/`service_role` JWT keys (legacy support ends 2026). _This supersedes the legacy env names shown in the design-handoff `README.md` §7 / `START-HERE.md`._
+   - `SUPABASE_SECRET_KEY` (`sb_secret_…`, `service_role` role) **bypasses RLS** and is the only write path; it is server-only (Supabase 401s a secret key sent from a browser). Pasting the publishable/anon key here makes every insert fail the RLS check — the app throws a clear startup error if it detects an RLS-respecting key in that slot (`src/lib/supabase-admin.ts` → `assertSecretKey`).
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_…`, `anon` role) respects RLS and is safe client-side; currently reserved/unused in code.
+   - RLS is enabled with **no policies** (migration), so the publishable/`anon` key can neither read nor write — exactly as intended.
 2. **Vercel** — import the GitHub repo, add the same env vars, add domain `kalyanithilak.com`.
 3. _(Optional)_ **Resend** — `RESEND_API_KEY` if you want new-lead email notifications (not wired yet).
 4. _(Optional, recommended at scale)_ **Upstash** — for distributed rate limiting.

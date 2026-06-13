@@ -47,15 +47,18 @@ prototype). The production site recreates it 1:1. The build spec is
   `generateStaticParams`. Only server code: `POST /api/lead`,
   `POST /api/newsletter`.
 - **Supabase schema is locked** (`supabase/migrations/0001_leads_newsletter.sql`
-  = README §7 exactly). RLS on, NO anon policies; writes only through the
-  route handlers with the service-role key (server-only). Zod-validate
-  everything; honeypot field `website` on both forms.
-- **Supabase keys: use the LEGACY JWT keys** (`anon` + `service_role` from the
-  dashboard's "Legacy API Keys" tab), NOT the new `sb_publishable_`/`sb_secret_`
-  keys — decided after a prior project had issues with the new keys. The
-  service-role key bypasses RLS (the only write path); the anon key respects RLS
-  (and is currently unused in code). `getSupabaseAdmin()` throws at startup if an
-  anon/publishable key is mistakenly placed in the service-role slot.
+  = README §7 exactly). RLS on, NO policies; writes only through the route
+  handlers with the secret key (server-only). Zod-validate everything; honeypot
+  field `website` on both forms.
+- **Supabase keys: use the NEW API keys** (decided day-one; legacy JWT keys
+  deprecate end-2026). Env vars: `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  (`sb_publishable_…`, `anon` role, respects RLS, client-safe, currently unused
+  in code) and `SUPABASE_SECRET_KEY` (`sb_secret_…`, `service_role` role,
+  bypasses RLS, server-only, the only write path). Do NOT use
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY` (legacy) — this
+  supersedes the legacy names in the design-handoff README/START-HERE.
+  `getSupabaseAdmin()`/`assertSecretKey()` throws at startup if an RLS-respecting
+  key (publishable or anon) is placed in the secret slot.
   - Known conflict, decided: the contact form's optional lastName/phone have
     no §7 columns — the route appends them to `message` in a delimited block.
 - Blog section name locked: **"Home Guide"**. Posts are typed TS files in

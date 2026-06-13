@@ -35,7 +35,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   const { email, sourcePage } = parsed.data
 
-  // Insert into newsletter_signups via service-role client
+  // Insert into newsletter_signups via the secret-key admin client (service_role, bypasses RLS)
   const supabase = getSupabaseAdmin()
   const { error } = await supabase.from('newsletter_signups').insert({
     email: email.toLowerCase(),

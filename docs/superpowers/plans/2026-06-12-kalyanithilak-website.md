@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **SUPERSEDED (post-build decision):** Supabase now uses the **new API keys** — env vars `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_…`) and `SUPABASE_SECRET_KEY` (`sb_secret_…`). All references below to `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` / "service-role key" are historical — see `docs/HANDOFF.md` and `CLAUDE.md` for the current scheme. The secret key plays the same role-bypassing-RLS part the service-role key did.
+
 **Goal:** Recreate the hi-fi prototype in `design_handoff_kt_website/design/` 1:1 as a production-grade, static-first Next.js 15 site with Supabase lead/newsletter capture, full test coverage, and Lighthouse/security sign-off.
 
 **Architecture:** Static-first App Router site — every page SSG (blog posts via `generateStaticParams`), the only server code is two POST route handlers (`/api/lead`, `/api/newsletter`) writing to Supabase with the service-role key behind Zod validation. The ported `kt-tokens.css` is the design-system layer (the `.kt-*` classes ARE the brand); Tailwind 3.4 supplies layout utilities with brand tokens mapped into its theme. Content (posts, resources, guides) lives in typed TS collections — publishing = git push.

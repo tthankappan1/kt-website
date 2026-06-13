@@ -22,7 +22,9 @@ create table newsletter_signups (
 );
 create unique index newsletter_signups_email_idx on newsletter_signups (lower(email));
 
--- RLS enabled with NO anon policies: the only write path is the server
--- route handlers using the service-role key (which bypasses RLS).
+-- RLS enabled with NO policies: the only write path is the server route
+-- handlers using the Supabase secret key (sb_secret_…, service_role role,
+-- which bypasses RLS). The publishable/anon key respects RLS, so with no
+-- policies the public can neither read nor write these tables.
 alter table leads enable row level security;
 alter table newsletter_signups enable row level security;

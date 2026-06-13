@@ -1,47 +1,50 @@
 import 'server-only'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-// Service-role client for the two write endpoints. RLS is ON with no anon
-// policies (README §7) — these inserts are the only write path, and they only
-// succeed because the service-role key BYPASSES RLS.
+// Secret-key client for the two write endpoints. RLS is ON with no policies
+// (README §7) — these inserts are the only write path, and they only succeed
+// because the secret key uses the `service_role` Postgres role and BYPASSES RLS.
 //
-// KEY COMPATIBILITY (see docs/HANDOFF.md): this project uses Supabase's LEGACY
-// JWT keys — the `anon` and `service_role` keys from the dashboard's
-// "Legacy API Keys" tab. SUPABASE_SERVICE_ROLE_KEY MUST be the `service_role`
-// key (role: service_role, BYPASSRLS). The code is format-agnostic — a new
-// `sb_secret_...` key would also work — but the most common, silent
-// misconfiguration is pasting the anon/publishable key into the service-role
-// slot: it respects RLS, so with no policies EVERY insert fails the RLS check.
-// assertServiceRoleKey() catches that at startup with a precise message.
+// KEY SCHEME (see docs/HANDOFF.md): this project uses Supabase's NEW API keys
+// (decided day-one; the legacy anon/service_role JWT keys deprecate end-2026).
+//   - SUPABASE_SECRET_KEY        — sb_secret_…  (server-only, bypasses RLS) ← used here
+//   - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY — sb_publishable_… (client-safe, respects RLS; reserved/unused in code)
+// The client is format-agnostic (a legacy service_role JWT would still work),
+// but the standard is the new secret key. The most common silent misconfig is
+// pasting a key that RESPECTS RLS into the secret slot (publishable key, or a
+// legacy anon JWT): with no policies, EVERY insert then fails the RLS check.
+// assertSecretKey() catches that at startup with a precise message.
+//
+// The secret key must never reach the browser (Supabase 401s it on a browser
+// User-Agent); `import 'server-only'` above enforces that at the bundler level.
 let client: SupabaseClient | null = null
 
 /**
- * Reject keys that are definitely NOT a service-role/secret key (they respect
+ * Reject keys that are definitely NOT a secret/service_role key (they respect
  * RLS, so they would break every write). Lenient: only throws on unambiguous
- * signals, otherwise allows the key through (legacy service_role JWT, new
- * sb_secret_, or any opaque key the client may accept).
+ * signals, otherwise allows the key through (new sb_secret_…, a legacy
+ * service_role JWT, or any opaque key the client may accept).
  */
-export function assertServiceRoleKey(key: string): void {
+export function assertSecretKey(key: string): void {
   // New-style publishable key in the secret slot — unambiguously wrong.
   if (key.startsWith('sb_publishable_')) {
     throw new Error(
-      'SUPABASE_SERVICE_ROLE_KEY looks like a PUBLISHABLE key (sb_publishable_…), which respects RLS and cannot write. Use the service_role key (Dashboard → Settings → API → Legacy API Keys) or a secret key (sb_secret_…).',
+      'SUPABASE_SECRET_KEY looks like a PUBLISHABLE key (sb_publishable_…), which respects RLS and cannot write. Use the Secret key (Dashboard → Settings → API Keys → Secret keys), e.g. sb_secret_….',
     )
   }
-  // Legacy JWT: decode the role claim. An `anon` JWT in the secret slot is the
-  // classic mistake — it respects RLS and silently fails every insert.
+  // Legacy JWT pasted in: an `anon` JWT respects RLS and silently fails writes.
   const parts = key.split('.')
   if (parts.length === 3) {
     try {
       const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'))
       if (payload?.role === 'anon') {
         throw new Error(
-          'SUPABASE_SERVICE_ROLE_KEY is the ANON key (role: anon), which respects RLS and cannot write past the no-policy tables. Paste the service_role key from Dashboard → Settings → API → Legacy API Keys.',
+          'SUPABASE_SECRET_KEY is an ANON key (role: anon), which respects RLS and cannot write past the no-policy tables. Use the Secret key from Dashboard → Settings → API Keys → Secret keys (sb_secret_…).',
         )
       }
     } catch (err) {
       // Re-throw our own assertion; ignore JWT-decode failures (opaque/new keys).
-      if (err instanceof Error && err.message.startsWith('SUPABASE_SERVICE_ROLE_KEY')) throw err
+      if (err instanceof Error && err.message.startsWith('SUPABASE_SECRET_KEY')) throw err
     }
   }
 }
@@ -49,14 +52,14 @@ export function assertServiceRoleKey(key: string): void {
 export function getSupabaseAdmin(): SupabaseClient {
   if (client) return client
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !serviceKey) {
+  const secretKey = process.env.SUPABASE_SECRET_KEY
+  if (!url || !secretKey) {
     throw new Error(
-      'Supabase is not configured: set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (see .env.local.example).',
+      'Supabase is not configured: set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY (see .env.local.example).',
     )
   }
-  assertServiceRoleKey(serviceKey)
-  client = createClient(url, serviceKey, {
+  assertSecretKey(secretKey)
+  client = createClient(url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
   return client

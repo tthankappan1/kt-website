@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
-  assertServiceRoleKey,
+  assertSecretKey,
   getSupabaseAdmin,
   resetSupabaseAdminForTests,
 } from '@/lib/supabase-admin'
@@ -21,44 +21,44 @@ describe('getSupabaseAdmin', () => {
 
   it('throws a clear configuration error when env is missing', () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', '')
-    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', '')
+    vi.stubEnv('SUPABASE_SECRET_KEY', '')
     expect(() => getSupabaseAdmin()).toThrow(/Supabase is not configured/)
   })
 
-  it('creates a client when env is present and caches it', () => {
+  it('creates a client with a new secret key and caches it', () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://example.supabase.co')
-    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', jwtWithRole('service_role'))
+    vi.stubEnv('SUPABASE_SECRET_KEY', 'sb_secret_test123')
     const a = getSupabaseAdmin()
     const b = getSupabaseAdmin()
     expect(a).toBe(b)
     expect(a.from).toBeTypeOf('function')
   })
 
-  it('rejects the anon key pasted into the service-role slot', () => {
+  it('rejects a publishable key pasted into the secret slot', () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://example.supabase.co')
-    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', jwtWithRole('anon'))
-    expect(() => getSupabaseAdmin()).toThrow(/ANON key/)
+    vi.stubEnv('SUPABASE_SECRET_KEY', 'sb_publishable_oops')
+    expect(() => getSupabaseAdmin()).toThrow(/PUBLISHABLE key/)
   })
 })
 
-describe('assertServiceRoleKey (legacy + new key compatibility guard)', () => {
-  it('accepts a legacy service_role JWT', () => {
-    expect(() => assertServiceRoleKey(jwtWithRole('service_role'))).not.toThrow()
-  })
-
+describe('assertSecretKey (key-misconfiguration guard)', () => {
   it('accepts a new-style secret key (sb_secret_…)', () => {
-    expect(() => assertServiceRoleKey('sb_secret_abc123')).not.toThrow()
+    expect(() => assertSecretKey('sb_secret_abc123')).not.toThrow()
   })
 
-  it('rejects a legacy anon JWT (respects RLS — would fail every write)', () => {
-    expect(() => assertServiceRoleKey(jwtWithRole('anon'))).toThrow(/ANON key/)
+  it('accepts a legacy service_role JWT (still bypasses RLS — works)', () => {
+    expect(() => assertSecretKey(jwtWithRole('service_role'))).not.toThrow()
   })
 
-  it('rejects a new publishable key in the secret slot', () => {
-    expect(() => assertServiceRoleKey('sb_publishable_abc123')).toThrow(/PUBLISHABLE key/)
+  it('rejects a publishable key (sb_publishable_… respects RLS — would fail writes)', () => {
+    expect(() => assertSecretKey('sb_publishable_abc123')).toThrow(/PUBLISHABLE key/)
+  })
+
+  it('rejects a legacy anon JWT (role: anon respects RLS)', () => {
+    expect(() => assertSecretKey(jwtWithRole('anon'))).toThrow(/ANON key/)
   })
 
   it('allows opaque non-JWT strings (cannot determine role — stays lenient)', () => {
-    expect(() => assertServiceRoleKey('some-opaque-key')).not.toThrow()
+    expect(() => assertSecretKey('some-opaque-key')).not.toThrow()
   })
 })
