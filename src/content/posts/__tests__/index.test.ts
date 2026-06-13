@@ -29,7 +29,7 @@ describe('posts index', () => {
   it('allPosts slugs are unique', async () => {
     const { allPosts } = await load()
     const slugs = allPosts.map(p => p.slug)
-    expect(new Set(slugs).size).toBe(8)
+    expect(new Set(slugs).size).toBe(allPosts.length)
   })
 
   it('every category is in KT_BLOG_CATS', async () => {
@@ -61,10 +61,23 @@ describe('posts index', () => {
     expect(slugs[1]).toBe('two-markets-twenty-minutes')
   })
 
-  it('NEXT_PUBLIC_SHOW_DRAFTS=true returns all 8 posts', async () => {
+  it('NEXT_PUBLIC_SHOW_DRAFTS=true (non-production) returns all posts', async () => {
+    vi.stubEnv('NODE_ENV', 'test')
+    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
+    const { allPosts, getPublishedPosts } = await load()
+    expect(getPublishedPosts()).toHaveLength(allPosts.length)
+  })
+
+  it('NEXT_PUBLIC_SHOW_DRAFTS=true is ignored when NODE_ENV=production — only real posts returned', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
     const { getPublishedPosts } = await load()
-    expect(getPublishedPosts()).toHaveLength(8)
+    const published = getPublishedPosts()
+    const slugs = published.map(p => p.slug)
+    expect(slugs).toContain('proximity-premium-san-jose')
+    expect(slugs).toContain('two-markets-twenty-minutes')
+    // every returned post must not be a draft
+    expect(published.every(p => !p.draft)).toBe(true)
   })
 
   it('real posts have byte-exact titles', async () => {
@@ -93,6 +106,16 @@ describe('posts index', () => {
     expect(sb.sources).toHaveLength(4)
   })
 
+  it('getPublishedPosts() returns a copy — mutating the result does not affect subsequent calls', async () => {
+    vi.stubEnv('NODE_ENV', 'test')
+    vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
+    const { getPublishedPosts } = await load()
+    const first = getPublishedPosts()
+    first.pop()
+    const second = getPublishedPosts()
+    expect(second.length).toBeGreaterThan(first.length)
+  })
+
   it('getPost returns undefined for unknown slug in production', async () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', '')
@@ -107,6 +130,7 @@ describe('posts index', () => {
     expect(getProdPost('spotlight-ruby-hill')).toBeUndefined()
 
     vi.resetModules()
+    vi.stubEnv('NODE_ENV', 'test')
     vi.stubEnv('NEXT_PUBLIC_SHOW_DRAFTS', 'true')
     const { getPost: getDevPost } = await load()
     expect(getDevPost('spotlight-ruby-hill')).toBeDefined()
