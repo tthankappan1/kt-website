@@ -1,0 +1,33 @@
+import type { Metadata } from 'next'
+import { KTNav } from '@/components/nav/kt-nav'
+import { KTNewsletter } from '@/components/close/kt-newsletter'
+import { KTFooter } from '@/components/close/kt-footer'
+import { BlogHero } from '@/components/blog/blog-hero'
+import { BlogFeatured } from '@/components/blog/featured'
+import { BlogArchive } from '@/components/blog/archive'
+import { getPublishedPosts } from '@/content/posts'
+
+export const metadata: Metadata = {
+  title: 'The Bay Area Home Guide',
+  description:
+    'Every issue of the weekly newsletter — the market read, neighborhood spotlights, and what the numbers actually mean for Tri-Valley buyers and sellers.',
+}
+
+export default function HomeGuidePage() {
+  const posts = getPublishedPosts()
+
+  return (
+    <div>
+      <KTNav base="/" />
+      <BlogHero />
+      <div className="bg-light">
+        <BlogFeatured posts={posts} />
+        <BlogArchive posts={posts} />
+      </div>
+      <div className="bg-dark on-dark" style={{ position: 'relative' }}>
+        <KTNewsletter archiveLink={false} />
+        <KTFooter />
+      </div>
+    </div>
+  )
+}
