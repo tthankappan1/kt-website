@@ -38,14 +38,15 @@ export function KTTestimonials() {
   return (
     <section id="testimonials" className="kt-section bg-light" style={{ paddingTop: 0 }}>
       <div className="kt-container">
-        <div className="kt-hybrid-block on-dark kt-reveal">
-          <p className="kt-eyebrow" style={{ color: 'var(--gold)' }}>
+        <div className="kt-hybrid-block on-dark">
+          <p className="kt-eyebrow on-dark" style={{ color: 'var(--gold)' }}>
             What clients say
           </p>
           <blockquote style={{ minHeight: '150px' }}>
             <p
               style={{
                 fontFamily: 'var(--serif)',
+                fontWeight: 400,
                 fontVariationSettings: '"opsz" 96',
                 fontSize: 'clamp(22px, 2.4vw, 30px)',
                 lineHeight: 1.45,
@@ -55,39 +56,48 @@ export function KTTestimonials() {
             >
               &ldquo;{active.quote}&rdquo;
             </p>
-            <footer
-              style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '24px' }}
-            >
-              <p
-                className="kt-body-small"
-                style={{
-                  color: 'var(--gold)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.18em',
-                  fontWeight: 500,
-                }}
-              >
-                {active.name} &middot; {active.where}
-              </p>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {KT_QUOTES.map((_, i) => (
-                  <button
-                    key={i}
-                    aria-label={`Quote ${i + 1}`}
-                    onClick={() => setIdx(i)}
-                    style={{
-                      width: '32px',
-                      height: '2px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      background: i === idx ? 'var(--gold)' : 'rgba(192,162,120,0.3)',
-                    }}
-                  />
-                ))}
-              </div>
-            </footer>
           </blockquote>
+          <div
+            data-testid="testimonial-attribution"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '16px',
+              marginTop: '32px',
+            }}
+          >
+            <p
+              className="kt-body-small"
+              style={{
+                color: 'var(--gold)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.18em',
+                fontWeight: 500,
+              }}
+            >
+              {active.name} &middot; {active.where}
+            </p>
+            <div data-testid="testimonial-dots" style={{ display: 'flex', gap: '10px' }}>
+              {KT_QUOTES.map((_, i) => (
+                <button
+                  key={i}
+                  aria-label={`Quote ${i + 1}`}
+                  onClick={() => setIdx(i)}
+                  style={{
+                    width: '32px',
+                    height: '2px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    background: i === idx ? 'var(--gold)' : 'rgba(192,162,120,0.3)',
+                    transition: 'background 0.3s',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
