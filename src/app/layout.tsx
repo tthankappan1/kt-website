@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Fraunces, Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import { SITE_URL } from '@/lib/site'
 import './globals.css'
 
@@ -39,6 +40,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        <Analytics />
       </body>
     </html>
   )
