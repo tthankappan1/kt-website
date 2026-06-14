@@ -37,16 +37,16 @@ describe('KTTestimonials', () => {
   it('renders the first quote visible initially', () => {
     vi.useFakeTimers()
     render(<KTTestimonials />)
-    expect(screen.getByText(/comparable sale/)).toBeInTheDocument()
+    expect(screen.getByText(/competitive multiple-offer/)).toBeInTheDocument()
   })
 
   it('advances to the second quote after 7000ms', () => {
     vi.useFakeTimers()
     render(<KTTestimonials />)
     act(() => {
-      vi.advanceTimersByTime(7000)
+      vi.advanceTimersByTime(3000)
     })
-    expect(screen.getByText(/actually worth/)).toBeInTheDocument()
+    expect(screen.getByText(/hard-working/)).toBeInTheDocument()
   })
 
   it('does NOT auto-advance when prefers-reduced-motion is set (dots still render)', () => {
@@ -54,23 +54,23 @@ describe('KTTestimonials', () => {
     vi.useFakeTimers()
     render(<KTTestimonials />)
     act(() => {
-      vi.advanceTimersByTime(7000)
+      vi.advanceTimersByTime(3000)
     })
     // Still on the first quote — no rotation
-    expect(screen.getByText(/comparable sale/)).toBeInTheDocument()
-    expect(screen.queryByText(/actually worth/)).not.toBeInTheDocument()
+    expect(screen.getByText(/competitive multiple-offer/)).toBeInTheDocument()
+    expect(screen.queryByText(/hard-working/)).not.toBeInTheDocument()
     // Dots remain for manual control
     expect(screen.getByRole('button', { name: 'Quote 2' })).toBeInTheDocument()
   })
 
-  it('jumps to third quote when dot 3 is clicked', () => {
+  it('jumps to second quote when dot 2 is clicked', () => {
     vi.useFakeTimers()
     render(<KTTestimonials />)
-    const dot3 = screen.getByRole('button', { name: 'Quote 3' })
+    const dot2 = screen.getByRole('button', { name: 'Quote 2' })
     act(() => {
-      fireEvent.click(dot3)
+      fireEvent.click(dot2)
     })
-    expect(screen.getByText(/two steps ahead/)).toBeInTheDocument()
+    expect(screen.getByText(/hard-working/)).toBeInTheDocument()
   })
 
   it('renders attribution text for first quote', () => {
@@ -78,8 +78,8 @@ describe('KTTestimonials', () => {
     render(<KTTestimonials />)
     // Attribution row is a sibling <div> after the <blockquote>, not inside it
     const attribution = document.querySelector('[data-testid="testimonial-attribution"]')
+    expect(attribution?.textContent).toContain('Arun Krishna')
     expect(attribution?.textContent).toContain('Buyer')
-    expect(attribution?.textContent).toContain('Pleasanton')
   })
 
   it('quote paragraph has fontWeight 400', () => {

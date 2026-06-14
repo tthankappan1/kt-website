@@ -5,21 +5,15 @@ import { useState, useEffect } from 'react'
 const KT_QUOTES = [
   {
     quote:
-      'Kalyani walked us through every comparable sale before we wrote a single offer. We always knew exactly where we stood — and we closed under asking in a competitive market.',
-    name: 'Buyer',
-    where: 'Pleasanton',
+      'While searching for a home, I found one I really liked that was in a competitive multiple-offer situation, and the inspection report also raised a few concerns I didn’t fully understand. Kalyani took the time to walk me through the inspection details, explain what was actually important, and help me put together a strong, sensible offer without any pressure. Her guidance made what could have been a stressful decision feel much more manageable. She’s patient, knowledgeable, and genuinely looks out for her clients.',
+    name: 'Arun Krishna',
+    where: 'Buyer',
   },
   {
     quote:
-      'She told us what our home was actually worth, not what we wanted to hear. The preparation plan paid for itself several times over.',
-    name: 'Seller',
-    where: 'San Ramon',
-  },
-  {
-    quote:
-      'Calm, precise, and two steps ahead the entire time. The first agent we have worked with who reads the numbers the way we do.',
-    name: 'Buyer',
-    where: 'Dublin',
+      'Kalyani is an incredibly hard-working and dedicated real estate agent. She’s always on top of every detail, ensuring no stone is left unturned throughout the process. Her knowledge of the East Bay is impressive, and she will truly go above and beyond to find the perfect home. I highly recommend her for anyone looking for a reliable and attentive agent!',
+    name: 'Veasna Duong',
+    where: 'Buyer',
   },
 ] as const
 
@@ -36,7 +30,7 @@ export function KTTestimonials() {
     }
     const id = setInterval(() => {
       setIdx((prev) => (prev + 1) % KT_QUOTES.length)
-    }, 7000)
+    }, 3000)
     return () => clearInterval(id)
   }, [])
 
