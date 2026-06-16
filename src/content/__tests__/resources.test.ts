@@ -100,15 +100,14 @@ describe('RESOURCE_PAGES', () => {
     const rowSection = page.sections.find(s => s.rows)!
     expect(rowSection).toBeDefined()
     expect(rowSection.rows).toHaveLength(6)
-    expect(rowSection.rows![0][0]).toBe('Agent compensation')
+    expect(rowSection.rows![0][0]).toBe('Preparation & staging')
+    expect(rowSection.rows![5][0]).toBe('Agent compensation')
   })
 
-  it('cost-of-selling note is byte-exact', () => {
+  it('cost-of-selling has no placeholder note', () => {
     const page = RESOURCE_PAGES['cost-of-selling']
-    const rowSection = page.sections.find(s => s.note)!
-    expect(rowSection.note).toBe(
-      'Placeholder copy — exact figures vary by city and price point. Before listing, you receive a personalized net sheet with every number filled in.'
-    )
+    const rowSection = page.sections.find(s => s.rows)!
+    expect(rowSection.note).toBeUndefined()
   })
 
   it('intero-concierge has 3 sections with steps and rows', () => {
@@ -155,9 +154,8 @@ describe('RESOURCE_PAGES', () => {
     const page = RESOURCE_PAGES['buying']
     const introSection = page.sections[0]
     expect(introSection.paras).toBeDefined()
-    expect(introSection.paras![0]).toBe(
-      'The right purchase is the one that still looks smart five years later. That means knowing the micro-market, reading the disclosure package carefully, and being willing to walk away. Speed matters in this market — but only after the homework is done.'
-    )
+    expect(introSection.paras![0]).toContain('The right purchase is the one that still looks smart five years later')
+    expect(introSection.paras).toHaveLength(2)
   })
 })
 

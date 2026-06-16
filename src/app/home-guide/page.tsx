@@ -10,7 +10,7 @@ import { getPublishedPosts } from '@/content/posts'
 export const metadata: Metadata = {
   title: 'The Bay Area Home Guide',
   description:
-    'Every issue of the weekly newsletter — the market read, neighborhood spotlights, and what the numbers actually mean for Tri-Valley buyers and sellers.',
+    'Every issue of the weekly newsletter — the market read, neighborhood spotlights, and what the numbers actually mean for Bay Area buyers and sellers.',
   alternates: { canonical: '/home-guide' },
 }
 

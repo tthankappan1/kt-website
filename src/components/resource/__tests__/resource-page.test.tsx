@@ -72,11 +72,10 @@ describe('ResourcePageView — cost-of-selling', () => {
     expect(rowTerm?.textContent).toBeTruthy()
   })
 
-  it('renders kt-note italic present', () => {
+  it('renders no kt-note (placeholder removed)', () => {
     const { container } = render(<ResourcePageView page="cost-of-selling" />)
     const note = container.querySelector('.kt-note')
-    expect(note).toBeInTheDocument()
-    expect(note?.textContent).toBeTruthy()
+    expect(note).not.toBeInTheDocument()
   })
 
   it('hero title is "The Cost of Selling"', () => {

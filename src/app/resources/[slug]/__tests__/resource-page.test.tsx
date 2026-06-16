@@ -96,13 +96,14 @@ describe('ResourcePage — cost-of-selling', () => {
     const { container } = render(page)
     const terms = container.querySelectorAll('.row-term')
     expect(terms.length).toBeGreaterThanOrEqual(6)
-    expect(terms[0].textContent).toBe('Agent compensation')
+    expect(terms[0].textContent).toBe('Preparation & staging')
+    expect(terms[5].textContent).toBe('Agent compensation')
   })
 
-  it('renders the kt-note placeholder text', async () => {
+  it('does not render placeholder note text', async () => {
     const page = await ResourcePage({ params: Promise.resolve({ slug: 'cost-of-selling' }) })
     render(page)
-    expect(screen.getByText(/Placeholder copy/)).toBeInTheDocument()
+    expect(screen.queryByText(/Placeholder copy/)).not.toBeInTheDocument()
   })
 })
 

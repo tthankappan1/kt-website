@@ -10,7 +10,7 @@ export function BlogHero() {
         <hr className="kt-rule" />
         <p className="kt-lead kt-measure" style={{ color: 'var(--body-on-dark)', maxWidth: '560px' }}>
           Every issue lives here &mdash; the market read, neighborhood spotlights, and what
-          the numbers actually mean for Tri-Valley buyers and sellers. New issues most weeks.
+          the numbers actually mean for Bay Area buyers and sellers. New issues most weeks.
         </p>
       </div>
     </header>

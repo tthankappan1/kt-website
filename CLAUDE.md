@@ -68,6 +68,14 @@ prototype). The production site recreates it 1:1. The build spec is
   `PhotoSlot` — filled → `next/image` cover-crop; absent → quiet brand frame,
   no placeholder text.
 
+## Content ingestion rules
+
+When updating copy in `src/content/resources.ts` (or any content TS file):
+
+- **Always use template literals (backticks) for strings that contain apostrophes or contractions.** Copy-pasted text from word processors, chat, or Google Docs arrives with typographic curly quotes (U+2018 `'` / U+2019 `'`). These are invalid JS string delimiters and cause parse errors when pasted inside single-quoted strings.
+- **Never bulk-replace curly quotes → straight quotes across the whole file.** That fixes delimiter issues but breaks any intentional typographic apostrophes already in the file (e.g. `"The Buyer's Guide"` uses a curly apostrophe on purpose).
+- **Safe pattern:** use backtick template literals for any body/para/step string; reserve single or double quotes only for short keys and titles without apostrophes.
+
 ## Content warnings (README §9 — before go-live, owner must)
 
 - Replace/verify ALL resource-page copy and guide prices/commutes (drafts!).

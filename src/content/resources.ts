@@ -21,17 +21,18 @@ export const RESOURCE_PAGES: Record<string, ResourcePage> = {
       {
         heading: 'How I think about selling',
         paras: [
-          'A good sale is built before the sign goes up. Pricing, preparation, and timing each compound — get all three right and the market does the heavy lifting; miss one and you are negotiating from behind. My role is to sequence them correctly and keep every decision grounded in current data, not in hope.',
+          `A good sale depends on three elements done right: pricing, preparation, and timing. Most of that work happens before the sign ever goes up — by the time a home hits the market, the outcome is largely already set. When all three come together, the market works in our favor: it lifts the weight, draws the right buyers, and lets us negotiate from a position of strength rather than playing catch-up. When even one is off, every later decision gets harder.`,
+          `I take pride in sequencing these decisions correctly and keeping every one of them a well-informed strategy — grounded in current comparable sales, real buyer activity, and how your home actually stacks up against today's competition. Backed by market data, not guesswork.`,
         ],
       },
       {
         heading: 'The process',
         steps: [
-          ['01', 'Strategy & pricing', 'We start with the numbers: recent comparable sales, the active competition, and how your home actually stacks up. You will see the data behind the recommended price — not just the conclusion.'],
-          ['02', 'Preparation', 'Targeted improvements only — the ones that return more than they cost. Staging, paint, landscaping, and repairs, coordinated for you (and where it makes sense, financed through Intero Concierge).'],
-          ['03', 'Launch', 'Professional photography, a property site, full MLS syndication, and a launch calendar designed to concentrate attention in the first two weeks, when buyer interest peaks.'],
-          ['04', 'Offers & negotiation', 'Every offer summarized side by side: price, terms, contingencies, and the buyer’s actual ability to close. We negotiate from facts, calmly.'],
-          ['05', 'Escrow to close', 'Inspections, disclosures, appraisal, and timelines managed proactively, with a weekly summary so you always know exactly where things stand.'],
+          ['01', 'Strategy & pricing', `We start with the numbers. Pulling best-quality data from multiple platforms, we build a comparative market analysis (CMA): recent sold and pending sales, the homes actively competing for your buyer right now, and exactly how yours stacks up against them. You'll see the data behind the recommended price — not just the conclusion. This is how the market ends up working for us instead of us working against the market.`],
+          ['02', 'Preparation', `This is where a home starts to show its real potential. The right preparation helps a buyer see not just what your home is today, but what their life in it could be — and that's what moves them. Still, more is not better. We invest only in the work that returns more than it costs: staging, paint, landscaping, and repairs, each chosen for impact rather than for the sake of doing everything. It's all coordinated for you — and where it makes sense, financed through Intero Concierge, so the cost comes out at close instead of out of pocket.`],
+          ['03', 'Launch', `Launch day matters more than most people expect. The moment your home hits the market, it gets its biggest wave of attention — and that wave fades faster than it builds. So we make the first impression count: professional photography that shows your home at its best, a dedicated property site of its own, and full MLS syndication so every serious buyer sees it. All of it timed around a launch calendar built to concentrate interest in the first two weeks, when buyer attention is at its peak. We don't drift onto the market. We arrive.`],
+          ['04', 'Offers & negotiation', `When offers come in, emotions run high — this is the moment you've been working toward, and it's easy to get pulled toward the biggest number on the page. So we slow down and lay every offer side by side: price, terms, contingencies, and the buyer's real ability to actually close. The highest offer isn't always the strongest one, and you'll see exactly why. From there, we negotiate from facts — clear-headed, on your side, and never rushed into a decision that isn't yours.`],
+          ['05', 'Escrow to close', `Once you're in contract, the work shifts from selling to shepherding — and this is where deals quietly go sideways if no one's watching them. We stay ahead of all of it: inspections, disclosures, the appraisal, and every deadline in between, managed before they become problems rather than after. And you're never left wondering — a short summary lands in your inbox each week, in plain language, so you always know exactly where things stand and what's next. The goal is simple: you get to the closing table without surprises.`],
         ],
       },
     ],
@@ -44,17 +45,18 @@ export const RESOURCE_PAGES: Record<string, ResourcePage> = {
       {
         heading: 'How I think about buying',
         paras: [
-          'The right purchase is the one that still looks smart five years later. That means knowing the micro-market, reading the disclosure package carefully, and being willing to walk away. Speed matters in this market — but only after the homework is done.',
+          `The right purchase is the one that still looks smart five years later. Buying a home is the most emotional transaction most people ever make — it's easy to fall for the wrong house, or to talk yourself into the right house at the wrong price. My job is to keep that from happening: to know the micro-market block by block, to read the disclosure package closely enough to catch what others skim past, and to be willing to walk away when the numbers or the facts don't hold up.`,
+          `Speed matters in this market — homes move fast, and hesitation costs real opportunities. But speed is only an advantage after the homework is done. When you already know the neighborhood, the comparable sales, and exactly what you're looking for, you can move with confidence the moment the right home appears — quickly, but never blindly.`,
         ],
       },
       {
         heading: 'The process',
         steps: [
-          ['01', 'Consultation & pre-approval', 'We define the brief — towns, schools, commute, budget — and get your financing fully underwritten up front, so your offers carry real weight.'],
-          ['02', 'The search', 'Curated showings and honest assessments, including the homes I would pass on. Off-market and coming-soon opportunities surfaced where possible.'],
-          ['03', 'Offer strategy', 'Comparable data, seller motivation, and competition level shape every offer. You will know what it takes to win — and when winning would mean overpaying.'],
-          ['04', 'Contingencies & escrow', 'Inspections, appraisal, and loan milestones tracked closely. Issues surfaced early, and renegotiated when the facts support it.'],
-          ['05', 'Keys & beyond', 'Closing is the start, not the end — vendor referrals, tax calendar reminders, and an annual equity check-in for as long as you own the home.'],
+          ['01', 'Consultation & pre-approval', `We start by getting clear on what you're actually looking for — towns, schools, commute, budget, the trade-offs you're willing to make and the ones you're not. Then we get your financing fully underwritten up front, not just pre-qualified. The difference matters: when a seller is choosing between offers, a buyer whose loan is already underwritten reads as a sure thing — and in a competitive market, that certainty can win you the home over someone offering more. We do the hard part early so your offer carries real weight when it counts.`],
+          ['02', 'The search', `Once the brief is set, the search gets focused — fewer, better showings, not a weekend of touring everything on the market. And you'll get my honest read on each one, including the homes I'd tell you to pass on. Anyone can open doors; my job is to help you see what's really there — the slope of the lot, the deferred maintenance, the thing the listing photos politely avoided. Where they exist, I'll surface off-market and coming-soon opportunities too, so you're seeing homes before the crowd does.`],
+          ['03', 'Offer strategy', `When it's time to write an offer, we write it from evidence — not from nerves, and not from whatever number feels safe. Comparable sales tell us what the home is actually worth; the seller's motivation tells us what they truly care about, which is often timing or certainty as much as price; and the competition tells us how hard we need to lean in. You'll know exactly what it takes to win — and, just as important, when winning would mean overpaying. The goal was never to win at any cost. It's to win the right home, at a number that still looks smart five years from now.`],
+          ['04', 'Contingencies & escrow', `Once your offer is accepted, the pressure doesn't stop — it just changes shape. We stay on top of every milestone: inspections, the appraisal, and each loan deadline your lender sets, tracked closely so nothing slips. If something turns up — a roof near the end of its life, a number that doesn't appraise — you'll hear it from me early, not in a panic at the eleventh hour. And when the facts genuinely support it, we go back and renegotiate: a price adjustment, a credit, a repair. Not to manufacture leverage, but to make sure you close on the home you actually agreed to buy.`],
+          ['05', 'Keys & beyond', `For most agents, closing is the finish line. I see it as the start of the relationship. Once you have the keys, you don't lose me — you get vendor referrals when something breaks or needs updating, reminders before the property-tax deadlines that catch new owners off guard, and an annual equity check-in for as long as you own the home, so you always know where you stand and what your largest asset is actually doing. The best compliment in this business is a client who calls me years later — for their next move, or to send a friend my way.`],
         ],
       },
     ],
@@ -66,20 +68,19 @@ export const RESOURCE_PAGES: Record<string, ResourcePage> = {
     sections: [
       {
         paras: [
-          'Most sellers are surprised less by any single cost than by how the costs add up. Here is the honest picture of what it takes to sell in Alameda and Contra Costa counties — every line item on the table before you sign anything.',
+          `Most sellers aren't caught off guard by any single cost — they're caught off guard by how the costs stack up. Commission, prep, transfer tax, the fees that only appear at closing: each one manageable on its own, but worth seeing as a whole, and early. Here's the honest picture of what it takes to sell across Alameda and Contra Costa counties — every line item on the table before you sign anything, not a surprise on the closing statement.`,
         ],
       },
       {
         heading: 'Typical line items',
         rows: [
-          ['Agent compensation', 'The largest single item, and fully discussed up front — structure, amount, and what it covers, in writing before we list.'],
-          ['Preparation & staging', 'Paint, landscaping, repairs, and staging. Typically the highest-return dollars in the entire sale when targeted well.'],
-          ['County & city transfer taxes', 'Set by the county (and some cities) and allocated by local custom — varies by city, confirmed on your net sheet.'],
-          ['Inspections & reports', 'Pre-sale property, pest, and roof inspections, plus required local reports and retrofit certificates.'],
-          ['Title, escrow & fees', 'Title insurance, escrow services, recording fees, and HOA document fees where applicable.'],
-          ['Concessions & credits', 'Negotiated repair credits or rate buydowns, depending on the market and the buyer pool at your price point.'],
+          ['Preparation & staging', `Paint, landscaping, repairs, and staging — the same targeted-only discipline from the process above. Done right, these are often the highest-return dollars in the whole sale, which is precisely why we spend them deliberately, not broadly.`],
+          ['Inspections & reports', `Pre-sale property, pest, and roof inspections, plus the local reports and retrofit certificates California requires at sale. Done early, they put you ahead of buyer surprises instead of behind them — you control the story before a buyer's inspector does.`],
+          ['Title, escrow & fees', `Title insurance, escrow services, recording fees, and HOA document fees where applicable. Smaller individually, but real — itemized for you, never buried in the closing statement.`],
+          ['County & city transfer taxes', `Set by the county, with some cities adding their own, and allocated by local custom. Both the rate and who customarily pays vary by city — yours is confirmed exactly on your net sheet, never estimated loosely.`],
+          ['Concessions & credits', `Negotiated repair credits, rate buydowns, and sometimes a contribution toward the buyer's agent. What's customary depends on the market and the buyer pool at your price point — and none of it is decided without you.`],
+          ['Agent compensation', `The largest single item, and fully discussed up front — structure, amount, and what it covers, in writing before we list.`],
         ],
-        note: 'Placeholder copy — exact figures vary by city and price point. Before listing, you receive a personalized net sheet with every number filled in.',
       },
     ],
   },
@@ -147,7 +148,7 @@ export const RESOURCE_PAGES: Record<string, ResourcePage> = {
 
   'market-updates': {
     title: 'Market Updates',
-    sub: 'A monthly, plain-English read of the East Bay market.',
+    sub: 'A monthly, plain-English read of the Bay Area market.',
     sections: [
       {
         paras: [
@@ -167,7 +168,7 @@ export const RESOURCE_PAGES: Record<string, ResourcePage> = {
   },
 
   'buyers-guide': {
-    title: 'The Buyer’s Guide',
+    title: "The Buyer’s Guide",
     sub: 'Everything worth knowing before your first offer.',
     sections: [
       {
