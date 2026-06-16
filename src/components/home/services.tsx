@@ -5,19 +5,19 @@ const KT_SERVICES = [
     num: '01',
     title: 'Buying',
     href: '/resources/buying',
-    body: 'Strategy before search. Understand what recent comparable sales suggest, where the leverage is, and how to win the right home without overpaying.',
+    body: 'The right home at the right price — and never rushed into one that won\'t still look smart five years from now.',
   },
   {
     num: '02',
     title: 'Selling',
     href: '/resources/selling',
-    body: 'An honest market assessment, preparation that earns its cost back, and pricing built on six closed sales — not wishful thinking.',
+    body: 'Pricing, preparation, and timing done right — most of the outcome is set before the sign ever goes up.',
   },
   {
     num: '03',
     title: 'Market guidance',
     href: '/resources/market-updates',
-    body: 'Not ready to move? Quarterly check-ins on where the Tri-Valley market is today, and what waiting actually costs.',
+    body: 'Not ready to move yet? A plain-English read of the Bay Area market — what\'s selling, what\'s sitting, and what waiting actually costs.',
   },
 ] as const
 
