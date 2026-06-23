@@ -7,13 +7,13 @@ vi.mock('@/lib/images', () => ({
 }))
 
 describe('KTIntro', () => {
-  it('renders the heading with em Tri-Valley', () => {
+  it('renders the heading with em home', () => {
     render(<KTIntro />)
     const heading = screen.getByRole('heading', { level: 2 })
-    expect(heading.textContent).toContain('Tri-Valley')
+    expect(heading.textContent).toContain('never just a transaction')
     const em = heading.querySelector('em')
     expect(em).toBeInTheDocument()
-    expect(em?.textContent).toBe('Tri-Valley')
+    expect(em?.textContent).toBe('home')
   })
 
   it('renders Work with Kalyani link to /contact', () => {
@@ -28,18 +28,24 @@ describe('KTIntro', () => {
     expect(slot).toBeInTheDocument()
   })
 
-  it('renders the first paragraph with key phrase (street by street)', () => {
+  it('renders the opening paragraph with key phrase (keeps all of us guessing)', () => {
     render(<KTIntro />)
-    expect(screen.getByText(/street by street/)).toBeInTheDocument()
+    expect(screen.getByText(/keeps all of us guessing/)).toBeInTheDocument()
   })
 
-  it('renders the second paragraph with key phrase (data-grounded)', () => {
+  it('renders the career paragraph with key phrase (find their footing)', () => {
     render(<KTIntro />)
-    expect(screen.getByText(/data-grounded/)).toBeInTheDocument()
+    expect(screen.getByText(/find their footing/)).toBeInTheDocument()
   })
 
-  it('renders the third paragraph with key phrase (calm, informed)', () => {
+  it('renders the approach paragraph with key phrase (patient, honest)', () => {
     render(<KTIntro />)
-    expect(screen.getByText(/calm, informed/)).toBeInTheDocument()
+    expect(screen.getByText(/patient, honest/)).toBeInTheDocument()
+  })
+
+  it('renders the client review pull quote', () => {
+    render(<KTIntro />)
+    expect(screen.getByText(/without\s+any\s+pressure/)).toBeInTheDocument()
+    expect(screen.getByText('Client review')).toBeInTheDocument()
   })
 })
