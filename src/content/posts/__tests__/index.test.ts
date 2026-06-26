@@ -14,9 +14,9 @@ describe('posts index', () => {
     return mod
   }
 
-  it('allPosts has 8 entries', async () => {
+  it('allPosts has 9 entries', async () => {
     const { allPosts } = await load()
-    expect(allPosts).toHaveLength(8)
+    expect(allPosts).toHaveLength(9)
   })
 
   it('allPosts is sorted descending by date', async () => {
@@ -47,18 +47,20 @@ describe('posts index', () => {
     }
   })
 
-  it('production mode returns exactly the 2 real posts', async () => {
+  it('production mode returns exactly the 3 real posts', async () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('SHOW_DRAFTS', '')
     const { getPublishedPosts } = await load()
     const published = getPublishedPosts()
-    expect(published).toHaveLength(2)
+    expect(published).toHaveLength(3)
     const slugs = published.map(p => p.slug)
+    expect(slugs).toContain('national-headlines-tri-valley-summer')
     expect(slugs).toContain('proximity-premium-san-jose')
     expect(slugs).toContain('two-markets-twenty-minutes')
     // newest first
-    expect(slugs[0]).toBe('proximity-premium-san-jose')
-    expect(slugs[1]).toBe('two-markets-twenty-minutes')
+    expect(slugs[0]).toBe('national-headlines-tri-valley-summer')
+    expect(slugs[1]).toBe('proximity-premium-san-jose')
+    expect(slugs[2]).toBe('two-markets-twenty-minutes')
   })
 
   it('SHOW_DRAFTS=true (non-production) returns all posts', async () => {

@@ -27,6 +27,19 @@ describe('PostBody', () => {
     expect(em?.textContent).toBe('Title')
   })
 
+  it('renders {list} block as ul.kt-list with one li per item and inline markup', () => {
+    const body: PostBlock[] = [{ list: ['First **bold** item', 'Second item'] }]
+    const { container } = render(<PostBody body={body} />)
+    const ul = container.querySelector('ul.kt-list')
+    expect(ul).toBeInTheDocument()
+    const items = ul?.querySelectorAll('li')
+    expect(items?.length).toBe(2)
+    expect(items?.[0].textContent).toBe('First bold item')
+    // **bold** rendered as <strong> inside the li
+    expect(items?.[0].querySelector('strong')?.textContent).toBe('bold')
+    expect(items?.[1].textContent).toBe('Second item')
+  })
+
   it('renders {cta} block as div.kt-cta', () => {
     const body: PostBlock[] = [{ cta: 'Call me today.' }]
     const { container } = render(<PostBody body={body} />)
@@ -74,6 +87,7 @@ describe('PostBody', () => {
     const body: PostBlock[] = [
       'paragraph text',
       { h: 'A heading' },
+      { list: ['List item one'] },
       { cta: 'Click here' },
       { disclaimer: 'Disclaimer text' },
       { sources: [{ t: 'Source A', href: 'https://example.com' }] },
@@ -81,6 +95,7 @@ describe('PostBody', () => {
     render(<PostBody body={body} />)
     expect(screen.getByText('paragraph text')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument()
+    expect(screen.getByText('List item one')).toBeInTheDocument()
     expect(screen.getByText('Click here')).toBeInTheDocument()
     expect(screen.getByText('Disclaimer text')).toBeInTheDocument()
     expect(screen.getByText('Source A')).toBeInTheDocument()

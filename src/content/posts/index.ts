@@ -2,6 +2,7 @@
 // then add one import line here. Sorting and draft-filtering are automatic.
 import type { Post } from './types'
 
+import { post as nationalHeadlinesTriValleySummer } from './national-headlines-tri-valley-summer'
 import { post as proximityPremiumSanJose } from './proximity-premium-san-jose'
 import { post as twoMarketsTwentyMinutes } from './two-markets-twenty-minutes'
 import { post as spotlightRubyHill } from './spotlight-ruby-hill'
@@ -12,6 +13,7 @@ import { post as springInventoryEarlySignals } from './spring-inventory-early-si
 import { post as winterListingsReadTwice } from './winter-listings-read-twice'
 
 export const allPosts: Post[] = [
+  nationalHeadlinesTriValleySummer,
   proximityPremiumSanJose,
   twoMarketsTwentyMinutes,
   spotlightRubyHill,

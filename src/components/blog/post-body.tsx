@@ -19,6 +19,17 @@ export function PostBody({ body }: { body: PostBlock[] }) {
             </h2>
           )
         }
+        if ('list' in b) {
+          return (
+            <ul key={idx} className="kt-list">
+              {b.list.map((item, li) => (
+                <li key={li}>
+                  <KtInline text={item} />
+                </li>
+              ))}
+            </ul>
+          )
+        }
         if ('cta' in b) {
           return (
             <div key={idx} className="kt-cta">

@@ -727,6 +727,19 @@ a.kt-bcard-link:hover .kt-bcard-title { color: var(--gold-deep); }
 }
 .pn-title { display: block; font-family: var(--serif); font-size: 19px; color: var(--charcoal); margin-top: 10px; }
 
+/* content list (ported from brand newsletter .body-list — gold-deep hairline markers on light) */
+.kt-prose .kt-list {
+  list-style: none; max-width: 680px; margin: 0 0 24px; padding: 0;
+  font-size: 17.5px; line-height: 1.7; font-weight: 300; color: var(--charcoal);
+}
+.kt-prose .kt-list li { position: relative; padding-left: 28px; }
+.kt-prose .kt-list li + li { margin-top: 10px; }
+.kt-prose .kt-list li::before {
+  content: ""; position: absolute; left: 0; top: 15px;
+  width: 14px; height: 1px; background: var(--gold-deep);
+}
+.kt-prose .kt-list strong { font-weight: 500; color: var(--charcoal); }
+
 /* newsletter-issue blocks (CTA callout, disclaimer, sources — per brand newsletter template) */
 .kt-cta {
   font-family: var(--sans); font-weight: 400; font-size: 16.5px; line-height: 1.65;
