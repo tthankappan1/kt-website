@@ -27,7 +27,7 @@ export function BlogFeatured({ posts }: { posts: Post[] }) {
           )}
           <div>
             <p className="kt-eyebrow">Latest issue &middot; {ktFormatDate(lead.date)}</p>
-            <Link className="kt-bcard-link" href={`/home-guide/${lead.slug}`}>
+            <Link className="kt-bcard-link" href={`/newsletter/${lead.slug}`}>
               <h2
                 className="kt-bcard-title"
                 style={{ fontSize: 'clamp(28px, 3vw, 40px)', lineHeight: 1.15 }}
@@ -38,7 +38,7 @@ export function BlogFeatured({ posts }: { posts: Post[] }) {
             <p className="kt-lead" style={{ maxWidth: '480px', marginBottom: '24px' }}>
               {lead.excerpt}
             </p>
-            <Link className="kt-read" href={`/home-guide/${lead.slug}`}>
+            <Link className="kt-read" href={`/newsletter/${lead.slug}`}>
               Read the issue &rarr;
             </Link>
           </div>
@@ -70,7 +70,7 @@ export function BlogFeatured({ posts }: { posts: Post[] }) {
                 <p className="kt-eyebrow">
                   {p.category} &middot; {ktFormatDate(p.date)}
                 </p>
-                <Link className="kt-bcard-link" href={`/home-guide/${p.slug}`}>
+                <Link className="kt-bcard-link" href={`/newsletter/${p.slug}`}>
                   <h3 className="kt-bcard-title" style={{ fontSize: '24px', lineHeight: 1.25 }}>
                     <KtInline text={p.title} emClass="kt-em" />
                   </h3>

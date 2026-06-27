@@ -28,11 +28,11 @@ export async function generateMetadata({
   if (!post) return {}
   const title = ktPlain(post.title)
   const description = post.excerpt
-  const url = SITE_URL + '/home-guide/' + slug
+  const url = SITE_URL + '/newsletter/' + slug
   return {
     title,
     description,
-    alternates: { canonical: '/home-guide/' + slug },
+    alternates: { canonical: '/newsletter/' + slug },
     openGraph: {
       title,
       description,
@@ -66,7 +66,7 @@ export default async function PostPage({
       <main id="main">
       <header className="bg-dark on-dark" style={{ padding: '170px 0 72px' }}>
         <div className="kt-container">
-          <Link className="kt-read" href="/home-guide" style={{ color: 'var(--gold)' }}>
+          <Link className="kt-read" href="/newsletter" style={{ color: 'var(--gold)' }}>
             &larr; All issues
           </Link>
           <p className="kt-eyebrow on-dark" style={{ marginTop: '32px' }}>
@@ -121,7 +121,7 @@ export default async function PostPage({
         <div className="kt-container" style={{ paddingBottom: '96px' }}>
           <div className="kt-pn-grid">
             {older ? (
-              <Link className="kt-pn" href={`/home-guide/${older.slug}`}>
+              <Link className="kt-pn" href={`/newsletter/${older.slug}`}>
                 <span className="pn-dir">&larr; Previous issue</span>
                 <span className="pn-title">{ktPlain(older.title)}</span>
               </Link>
@@ -131,7 +131,7 @@ export default async function PostPage({
             {newer ? (
               <Link
                 className="kt-pn"
-                href={`/home-guide/${newer.slug}`}
+                href={`/newsletter/${newer.slug}`}
                 style={{ textAlign: 'right' }}
               >
                 <span className="pn-dir">Next issue &rarr;</span>

@@ -35,7 +35,7 @@ describe('POST /api/newsletter', () => {
 
   it('returns 200 and calls insert with lowercased email on valid input', async () => {
     insertMock.mockResolvedValue({ error: null })
-    const req = makeRequest({ email: 'Reader@Example.COM', sourcePage: '/home-guide' })
+    const req = makeRequest({ email: 'Reader@Example.COM', sourcePage: '/newsletter' })
     const res = await POST(req)
     const body = await res.json()
     expect(res.status).toBe(200)
@@ -43,7 +43,7 @@ describe('POST /api/newsletter', () => {
     expect(insertMock).toHaveBeenCalledOnce()
     expect(insertMock).toHaveBeenCalledWith({
       email: 'reader@example.com',
-      source_page: '/home-guide',
+      source_page: '/newsletter',
     })
   })
 

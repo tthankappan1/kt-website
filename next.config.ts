@@ -40,12 +40,15 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
   },
-  // The blog section is named "Home Guide" (locked); resolve any guessed or
-  // legacy /blog links to the canonical routes (308 permanent).
+  // The blog section is named "Newsletter" (locked), served at /newsletter.
+  // Resolve any guessed or legacy links — /blog (never shipped) and the former
+  // /home-guide path — to the canonical routes (308 permanent).
   async redirects() {
     return [
-      { source: '/blog', destination: '/home-guide', permanent: true },
-      { source: '/blog/:slug', destination: '/home-guide/:slug', permanent: true },
+      { source: '/blog', destination: '/newsletter', permanent: true },
+      { source: '/blog/:slug', destination: '/newsletter/:slug', permanent: true },
+      { source: '/home-guide', destination: '/newsletter', permanent: true },
+      { source: '/home-guide/:slug', destination: '/newsletter/:slug', permanent: true },
     ]
   },
 }

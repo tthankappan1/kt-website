@@ -5,7 +5,7 @@ import fs from 'node:fs'
 
 const SYS = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const chromePath = fs.existsSync(SYS) ? SYS : chromium.executablePath()
-const URLS = [['/', 'home'], ['/home-guide', 'home-guide'], ['/home-guide/proximity-premium-san-jose', 'post']]
+const URLS = [['/', 'home'], ['/newsletter', 'newsletter'], ['/newsletter/proximity-premium-san-jose', 'post']]
 const chrome = await chromeLauncher.launch({
   chromePath,
   chromeFlags: ['--headless', '--no-sandbox', '--disable-gpu', '--no-first-run'],

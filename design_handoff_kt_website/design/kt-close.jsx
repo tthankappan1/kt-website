@@ -42,7 +42,7 @@ function KTNewsletter({ serifUI, archiveLink = true }) {
     <div className="kt-container" style={{ paddingTop: 'var(--sect-pad)', paddingBottom: 'var(--sect-pad)' }}>
       <div className="grid-news kt-reveal">
         <div>
-          <p className="kt-eyebrow on-dark">The Bay Area Home Guide</p>
+          <p className="kt-eyebrow on-dark">The Bay Area Newsletter</p>
           <h2 className="kt-h2" style={{ color: 'var(--ivory)', fontSize: 'clamp(24px, 2.4vw, 30px)' }}>
             One email a week. Where the <em className="kt-em">market</em> is, and what it means.
           </h2>

@@ -5,7 +5,7 @@ export function BlogHero() {
       <div className="kt-container">
         <p className="kt-eyebrow on-dark">The weekly newsletter &middot; archived here</p>
         <h1 className="kt-display" style={{ fontSize: 'clamp(40px, 5vw, 72px)' }}>
-          The Bay Area <em className="kt-em">Home Guide</em>
+          The Bay Area <em className="kt-em">Newsletter</em>
         </h1>
         <hr className="kt-rule" />
         <p className="kt-lead kt-measure" style={{ color: 'var(--body-on-dark)', maxWidth: '560px' }}>

@@ -16,7 +16,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   if (!post) {
     // Unknown slug (only reachable outside the prebuilt params) — branded shell.
-    return renderOgImage({ title: 'The Bay Area Home Guide', titleFontSize: 64 })
+    return renderOgImage({ title: 'The Bay Area Newsletter', titleFontSize: 64 })
   }
 
   return renderOgImage({

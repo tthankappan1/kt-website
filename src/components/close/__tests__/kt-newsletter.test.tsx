@@ -88,11 +88,11 @@ describe('KTNewsletter', () => {
     expect(screen.queryByText(/Browse past issues/)).not.toBeInTheDocument()
   })
 
-  it('archiveLink={true} shows Browse past issues link to /home-guide', () => {
+  it('archiveLink={true} shows Browse past issues link to /newsletter', () => {
     render(<KTNewsletter />)
     const link = screen.getByText(/Browse past issues/)
     expect(link.tagName.toLowerCase()).toBe('a')
-    expect(link.getAttribute('href')).toBe('/home-guide')
+    expect(link.getAttribute('href')).toBe('/newsletter')
   })
 
   it('honeypot input exists with name=website and tabIndex -1', () => {

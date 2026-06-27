@@ -125,9 +125,9 @@ describe('BlogArchive', () => {
     expect(heading.textContent).toContain('issue')
   })
 
-  it('archive rows link to /home-guide/<slug>', () => {
+  it('archive rows link to /newsletter/<slug>', () => {
     render(<BlogArchive posts={POSTS} />)
     const link = screen.getByRole('link', { name: /May Market Update/ })
-    expect(link.getAttribute('href')).toBe('/home-guide/market-may')
+    expect(link.getAttribute('href')).toBe('/newsletter/market-may')
   })
 })

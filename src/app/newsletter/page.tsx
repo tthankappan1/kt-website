@@ -8,13 +8,13 @@ import { BlogArchive } from '@/components/blog/archive'
 import { getPublishedPosts } from '@/content/posts'
 
 export const metadata: Metadata = {
-  title: 'The Bay Area Home Guide',
+  title: 'The Bay Area Newsletter',
   description:
     'Every issue of the weekly newsletter — the market read, neighborhood spotlights, and what the numbers actually mean for Bay Area buyers and sellers.',
-  alternates: { canonical: '/home-guide' },
+  alternates: { canonical: '/newsletter' },
 }
 
-export default function HomeGuidePage() {
+export default function NewsletterPage() {
   const posts = getPublishedPosts()
 
   return (

@@ -38,7 +38,7 @@ export function KTNav({ base = '' }: KTNavProps) {
           <a className="kt-navlink" href={base + '#about'}>About</a>
           <a className="kt-navlink" href={base + '#services'}>Services</a>
           <a className="kt-navlink" href={base + '#testimonials'}>Testimonials</a>
-          <Link className="kt-navlink" href="/home-guide">Home Guide</Link>
+          <Link className="kt-navlink" href="/newsletter">Newsletter</Link>
           <ResourcesDrop />
           <NavSocial />
           <Link className="kt-btn btn-ghost-dark" href="/contact" style={{ padding: '10px 22px' }}>Contact</Link>

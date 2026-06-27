@@ -43,7 +43,7 @@ prototype). The production site recreates it 1:1. The build spec is
 - Next.js 15 App Router · React 19 · TS 5 · Tailwind 3.4 (brand tokens mapped
   into theme; the ported `.kt-*` classes in `src/app/globals.css` ARE the
   design system — do not restyle them).
-- **Static-first:** every page SSG; blog at `/home-guide/<slug>` via
+- **Static-first:** every page SSG; blog at `/newsletter/<slug>` via
   `generateStaticParams`. Only server code: `POST /api/lead`,
   `POST /api/newsletter`.
 - **Supabase schema is locked** (`supabase/migrations/0001_leads_newsletter.sql`
@@ -61,9 +61,12 @@ prototype). The production site recreates it 1:1. The build spec is
   key (publishable or anon) is placed in the secret slot.
   - Known conflict, decided: the contact form's optional lastName/phone have
     no §7 columns — the route appends them to `message` in a delimited block.
-- Blog section name locked: **"Home Guide"**. Posts are typed TS files in
-  `src/content/posts/` — publishing = add file + git push. 2 real issues; the
-  6 `draft: true` posts NEVER ship to production (visible in dev only).
+- Blog section name locked: **"Newsletter"**, served at `/newsletter` (renamed
+  from "Home Guide" 2026-06-26 — "Home Guide" read like a static buyer's guide,
+  not the weekly newsletter archive it is; old `/home-guide` + `/home-guide/<slug>`
+  paths 301-redirect to `/newsletter` in `next.config.ts`). Posts are typed TS
+  files in `src/content/posts/` — publishing = add file + git push. 2 real
+  issues; the 6 `draft: true` posts NEVER ship to production (visible in dev only).
 - Photo slots: `public/images/<slot-id>.jpg` (ids in PHOTOS.md) rendered by
   `PhotoSlot` — filled → `next/image` cover-crop; absent → quiet brand frame,
   no placeholder text.

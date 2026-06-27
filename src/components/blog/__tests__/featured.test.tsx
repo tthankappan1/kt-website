@@ -40,13 +40,13 @@ const POST_THREE: Post = {
 
 describe('BlogFeatured', () => {
   describe('with 3 posts (first has cover)', () => {
-    it('lead title link href points to /home-guide/<slug>', () => {
+    it('lead title link href points to /newsletter/<slug>', () => {
       render(<BlogFeatured posts={[COVER_POST, POST_NO_COVER, POST_THREE]} />)
-      // There are two links with the title; both should go to /home-guide/cover-post
+      // There are two links with the title; both should go to /newsletter/cover-post
       const links = screen.getAllByRole('link', { name: /Great Cover Story/ })
       expect(links.length).toBeGreaterThanOrEqual(1)
       links.forEach((link) => {
-        expect(link.getAttribute('href')).toBe('/home-guide/cover-post')
+        expect(link.getAttribute('href')).toBe('/newsletter/cover-post')
       })
     })
 

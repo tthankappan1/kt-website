@@ -39,11 +39,11 @@ describe('NotFound page', () => {
     expect(link).toHaveAttribute('href', '/')
   })
 
-  it('renders The Home Guide link pointing to /home-guide', () => {
+  it('renders The Newsletter link pointing to /newsletter', () => {
     render(<NotFound />)
-    const link = screen.getByRole('link', { name: 'The Home Guide' })
+    const link = screen.getByRole('link', { name: 'The Newsletter' })
     expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('href', '/home-guide')
+    expect(link).toHaveAttribute('href', '/newsletter')
   })
 
   it('exports metadata with the title (Next applies noindex to the not-found route by default)', () => {
