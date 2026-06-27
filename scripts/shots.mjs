@@ -34,8 +34,8 @@ await new Promise((resolve) => protoServer.listen(PROTO_PORT, '127.0.0.1', resol
 const PAGES = [
   { name: 'home', prototype: 'KT Home.html', route: '/' },
   { name: 'contact', prototype: 'Contact.html', route: '/contact' },
-  { name: 'home-guide', prototype: 'Blog.html', route: '/home-guide' },
-  { name: 'post', prototype: 'Blog Post.html?post=proximity-premium-san-jose', route: '/home-guide/proximity-premium-san-jose' },
+  { name: 'newsletter', prototype: 'Blog.html', route: '/newsletter' },
+  { name: 'post', prototype: 'Blog Post.html?post=proximity-premium-san-jose', route: '/newsletter/proximity-premium-san-jose' },
   { name: 'selling', prototype: 'Selling.html', route: '/resources/selling' },
   { name: 'buying', prototype: 'Buying.html', route: '/resources/buying' },
   { name: 'cost-of-selling', prototype: 'Cost of Selling.html', route: '/resources/cost-of-selling' },

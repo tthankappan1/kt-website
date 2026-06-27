@@ -21,10 +21,10 @@ describe('KTNav', () => {
     expect(link.getAttribute('href')).toBe('/#testimonials')
   })
 
-  it('Home Guide links to /home-guide', () => {
+  it('Newsletter links to /newsletter', () => {
     render(<KTNav base="/" />)
-    const link = screen.getByRole('link', { name: 'Home Guide' })
-    expect(link.getAttribute('href')).toBe('/home-guide')
+    const link = screen.getByRole('link', { name: 'Newsletter' })
+    expect(link.getAttribute('href')).toBe('/newsletter')
   })
 
   it('Contact button links to /contact', () => {

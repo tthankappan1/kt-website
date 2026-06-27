@@ -18,7 +18,7 @@ const KT_SHARE_ICONS = {
 
 export function ShareRow({ slug, title }: { slug: string; title: string }) {
   const [copied, setCopied] = useState(false)
-  const url = SITE_URL + '/home-guide/' + slug
+  const url = SITE_URL + '/newsletter/' + slug
   const enc = encodeURIComponent
   const targets = [
     {

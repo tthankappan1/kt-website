@@ -43,22 +43,22 @@ vi.mock('@/components/close/kt-footer', () => ({
   KTFooter: () => <footer data-testid="kt-footer">footer</footer>,
 }))
 
-const { default: HomeGuidePage } = await import('../page')
+const { default: NewsletterPage } = await import('../page')
 
-describe('Home Guide page assembly', () => {
-  it('renders hero title "The Bay Area" + em "Home Guide"', () => {
-    const { container } = render(<HomeGuidePage />)
-    // The hero h1 contains "The Bay Area" as text node and em.kt-em "Home Guide"
+describe('Newsletter page assembly', () => {
+  it('renders hero title "The Bay Area" + em "Newsletter"', () => {
+    const { container } = render(<NewsletterPage />)
+    // The hero h1 contains "The Bay Area" as text node and em.kt-em "Newsletter"
     const h1 = container.querySelector('h1.kt-display')
     expect(h1).toBeInTheDocument()
     expect(h1?.textContent).toContain('The Bay Area')
-    expect(h1?.textContent).toContain('Home Guide')
+    expect(h1?.textContent).toContain('Newsletter')
     const em = h1?.querySelector('em.kt-em')
-    expect(em?.textContent).toBe('Home Guide')
+    expect(em?.textContent).toBe('Newsletter')
   })
 
   it('renders featured section', () => {
-    const { container } = render(<HomeGuidePage />)
+    const { container } = render(<NewsletterPage />)
     // Lead post h2 in featured section
     const featuredH2 = container.querySelector('h2.kt-bcard-title')
     expect(featuredH2).toBeInTheDocument()
@@ -66,25 +66,25 @@ describe('Home Guide page assembly', () => {
   })
 
   it('renders archive section with "Every issue" heading', () => {
-    render(<HomeGuidePage />)
+    render(<NewsletterPage />)
     const heading = screen.getByRole('heading', { level: 2, name: /Every/i })
     expect(heading).toBeInTheDocument()
   })
 
   it('renders newsletter without Browse past issues link', () => {
-    render(<HomeGuidePage />)
+    render(<NewsletterPage />)
     const newsletter = screen.getByTestId('kt-newsletter')
     expect(newsletter.getAttribute('data-archive-link')).toBe('false')
     expect(screen.queryByText(/Browse past issues/)).not.toBeInTheDocument()
   })
 
   it('renders footer', () => {
-    render(<HomeGuidePage />)
+    render(<NewsletterPage />)
     expect(screen.getByTestId('kt-footer')).toBeInTheDocument()
   })
 
   it('renders KTNav with base="/"', () => {
-    render(<HomeGuidePage />)
+    render(<NewsletterPage />)
     const nav = screen.getByTestId('kt-nav')
     expect(nav.getAttribute('data-base')).toBe('/')
   })

@@ -74,8 +74,8 @@ describe('sitemap()', () => {
   it('includes both published post routes', async () => {
     const entries = await loadSitemap()
     const urls = entries.map(e => e.url)
-    expect(urls).toContain(`${SITE_URL}/home-guide/proximity-premium-san-jose`)
-    expect(urls).toContain(`${SITE_URL}/home-guide/two-markets-twenty-minutes`)
+    expect(urls).toContain(`${SITE_URL}/newsletter/proximity-premium-san-jose`)
+    expect(urls).toContain(`${SITE_URL}/newsletter/two-markets-twenty-minutes`)
   })
 
   it('does not include any draft post slugs in production', async () => {
@@ -90,7 +90,7 @@ describe('sitemap()', () => {
     const entries = await loadSitemap()
     const urls = entries.map(e => e.url)
     for (const slug of draftSlugs) {
-      expect(urls).not.toContain(`${SITE_URL}/home-guide/${slug}`)
+      expect(urls).not.toContain(`${SITE_URL}/newsletter/${slug}`)
     }
   })
 
@@ -100,15 +100,15 @@ describe('sitemap()', () => {
     expect(home?.priority).toBe(1)
   })
 
-  it('/home-guide has priority 0.8', async () => {
+  it('/newsletter has priority 0.8', async () => {
     const entries = await loadSitemap()
-    const guide = entries.find(e => e.url === `${SITE_URL}/home-guide`)
+    const guide = entries.find(e => e.url === `${SITE_URL}/newsletter`)
     expect(guide?.priority).toBe(0.8)
   })
 
   it('published post routes have priority 0.7', async () => {
     const entries = await loadSitemap()
-    const posts = entries.filter(e => e.url.includes('/home-guide/'))
+    const posts = entries.filter(e => e.url.includes('/newsletter/'))
     expect(posts.length).toBeGreaterThan(0)
     for (const post of posts) {
       expect(post.priority).toBe(0.7)

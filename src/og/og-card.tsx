@@ -16,7 +16,7 @@ export const OG_CONTENT_TYPE = 'image/png'
 
 const FONT_PATH = path.join(process.cwd(), 'src/og/fonts/Fraunces-display.ttf')
 const COMPLIANCE = 'Kalyani Thilak · DRE 02254890 · Intero Real Estate Services'
-const EYEBROW = 'THE BAY AREA HOME GUIDE'
+const EYEBROW = 'THE BAY AREA NEWSLETTER'
 
 // Read once per build process (OG routes are statically generated). No
 // try/catch: a missing/invalid font is a real build error we want surfaced,

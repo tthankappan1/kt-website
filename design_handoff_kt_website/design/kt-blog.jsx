@@ -3,14 +3,14 @@
 
 /* ---------- section-name exploration (Tweaks) ---------- */
 const KT_BLOG_NAMES = {
-  'Home Guide':   { nav: 'Home Guide',   plain: 'The Bay Area Home Guide', pre: 'The Bay Area ', em: 'Home Guide' },
+  'Newsletter':   { nav: 'Newsletter',   plain: 'The Bay Area Newsletter', pre: 'The Bay Area ', em: 'Newsletter' },
   'Journal':      { nav: 'Journal',      plain: 'The Journal',             pre: 'The ',          em: 'Journal' },
   'Insights':     { nav: 'Insights',     plain: 'Insights',                pre: '',              em: 'Insights' },
   'Market Notes': { nav: 'Market Notes', plain: 'Market Notes',            pre: 'Market ',       em: 'Notes' },
 };
 
 const BLOG_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "blogName": "Home Guide"
+  "blogName": "Newsletter"
 }/*EDITMODE-END*/;
 
 /* ---------- hero ---------- */
@@ -165,7 +165,7 @@ function BlogArchive() {
 function BlogApp() {
   const [t, setTweak] = useTweaks(BLOG_TWEAK_DEFAULTS);
   useReveal();
-  const nm = KT_BLOG_NAMES[t.blogName] || KT_BLOG_NAMES['Home Guide'];
+  const nm = KT_BLOG_NAMES[t.blogName] || KT_BLOG_NAMES['Newsletter'];
 
   React.useEffect(() => {
     try { localStorage.setItem('kt-blog-nav', nm.nav); } catch (e) {}

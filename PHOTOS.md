@@ -31,7 +31,7 @@ Drop the file at `public/images/<slot-id>.jpg`. If the file is absent the compon
 
 ---
 
-## Home Guide blog posts (`/home-guide/<slug>`)
+## Newsletter posts (`/newsletter/<slug>`)
 
 Each post with `cover: true` in its frontmatter gets a cover image. The slot ID is `blog-` + the post's slug.
 

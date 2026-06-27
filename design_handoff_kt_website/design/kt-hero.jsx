@@ -89,7 +89,7 @@ function NavSocial() {
 function KTNav({ serifUI, base = '', blogLabel }) {
   let blogNav = blogLabel;
   if (!blogNav) {
-    try { blogNav = localStorage.getItem('kt-blog-nav') || 'Home Guide'; } catch (e) { blogNav = 'Home Guide'; }
+    try { blogNav = localStorage.getItem('kt-blog-nav') || 'Newsletter'; } catch (e) { blogNav = 'Newsletter'; }
   }
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {

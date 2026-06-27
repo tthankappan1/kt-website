@@ -11,7 +11,7 @@ A production, static-first Next.js 15 site recreating the hi-fi prototype 1:1, b
 | Scaffold, brand tokens, fonts (Fraunces+Inter via next/font, opsz preserved) | ✅ |
 | Shared Nav / Footer / Newsletter + social | ✅ |
 | Home, Contact (progressive lead form) | ✅ |
-| Home Guide blog: index, 2 real posts, share row, per-post OG images | ✅ |
+| Newsletter blog: index, 2 real posts, share row, per-post OG images | ✅ |
 | 7 resource pages + 2 neighborhood guides (data-driven) | ✅ |
 | Favicon, 404, privacy (CCPA draft), sitemap.xml, robots.txt | ✅ |
 | Supabase lead + newsletter capture (RLS on, secret-key server route, Zod) | ✅ (code) |
@@ -23,7 +23,7 @@ A production, static-first Next.js 15 site recreating the hi-fi prototype 1:1, b
 ## Acceptance bar (README §11)
 
 1. **Pixel-faithful desktop + mobile** — verified via side-by-side screenshots vs the prototype across all pages (`pnpm shots`).
-2. **Lighthouse** — Home **99 / 100 / 100 / 100**, Home Guide **99 / 96 / 100 / 100**, Post **99 / 94 / 100 / 100** (perf / a11y / best-practices / SEO). Above the ≥90 bar.
+2. **Lighthouse** — Home **99 / 100 / 100 / 100**, Newsletter **99 / 96 / 100 / 100**, Post **99 / 94 / 100 / 100** (perf / a11y / best-practices / SEO). Above the ≥90 bar.
 3. **No Babel / dev-React / render-blocking fonts** — confirmed: fonts self-hosted + preloaded (woff2), zero `fonts.googleapis.com`, no Babel, production React.
 4. **Full click-through** — every nav/dropdown/footer route returns 200 with correct `<h1>`, desktop + mobile, custom 404 (`pnpm verify:routes`).
 5. **Lead + newsletter validation** — Zod-validated server routes; invalid payloads rejected; honeypot + rate-limit. (Live inserts require the owner's Supabase env — see below.)
@@ -60,7 +60,7 @@ Read-only audit across 4 lenses (API/abuse, secrets/RLS, XSS/client, headers/dep
 8. Drop the **photos** into `public/images/<slot-id>.jpg` (ids in `design_handoff_kt_website/PHOTOS.md`); day-one must-have is `hero-full-img.jpg`.
 
 **Decisions:**
-9. Confirm the permalink scheme **`/home-guide/<slug>`** (permanent once shared).
+9. Confirm the permalink scheme **`/newsletter/<slug>`** (permanent once shared).
 10. Confirm interim email `kthilak@intero.com` vs a kalyanithilak.com mailbox.
 11. Have **legal counsel review `/privacy`** (drafted, flagged in-code).
 

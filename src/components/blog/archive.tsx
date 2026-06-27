@@ -125,7 +125,7 @@ export function BlogArchive({ posts }: { posts: Post[] }) {
                     {g.label}
                   </p>
                   {g.posts.map((p) => (
-                    <Link key={p.slug} className="kt-arch-row" href={`/home-guide/${p.slug}`}>
+                    <Link key={p.slug} className="kt-arch-row" href={`/newsletter/${p.slug}`}>
                       <span className="ar-date">{ktShortDate(p.date)}</span>
                       <span className="ar-title">
                         <KtInline text={p.title} emClass="kt-em" />

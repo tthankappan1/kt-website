@@ -40,8 +40,8 @@ export default function NotFound() {
             <Link className="kt-btn btn-solid-dark" href="/">
               Back home
             </Link>
-            <Link className="kt-btn btn-ghost-dark" href="/home-guide">
-              The Home Guide
+            <Link className="kt-btn btn-ghost-dark" href="/newsletter">
+              The Newsletter
             </Link>
           </div>
         </div>

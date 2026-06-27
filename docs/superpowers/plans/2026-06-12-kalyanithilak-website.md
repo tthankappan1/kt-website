@@ -27,12 +27,12 @@ These rules are stated once; every task that ports prototype JSX must follow the
 | `<image-slot id="X" …>` | `<PhotoSlot id="X" alt="…" …>` (Task 1.8). Aspect/size styles preserved. Production shows NO "Drop image" text — quiet brand frame when image absent. |
 | `href="KT Home.html"` / `base + '#about'` | `/` and `/#about` (on home page itself: `#about`) |
 | `href="Contact.html"` | `/contact` |
-| `href="Blog.html"` | `/home-guide` |
-| `href="Blog Post.html?post=<slug>"` | `/home-guide/<slug>` |
+| `href="Blog.html"` | `/newsletter` |
+| `href="Blog Post.html?post=<slug>"` | `/newsletter/<slug>` |
 | `href="Selling.html"` etc. | `/resources/selling`, `/resources/buying`, `/resources/cost-of-selling`, `/resources/intero-concierge`, `/resources/schools`, `/resources/market-updates`, `/resources/buyers-guide` |
 | `Alameda County Neighborhoods.html` | `/neighborhoods/alameda-county` |
 | `Contra Costa County Neighborhoods.html` | `/neighborhoods/contra-costa-county` |
-| `localStorage['kt-blog-nav']` | hardcode `"Home Guide"` (decision locked) |
+| `localStorage['kt-blog-nav']` | hardcode `"Newsletter"` (decision locked) |
 | `localStorage['kt-leads']` / `window.KT_CRM.submit()` | `POST /api/lead` |
 | Tweaks panel / `useTweaks` / `TweaksPanel` | DELETE. Hardcode: hero = Full-bleed, `--dm: 1`, default palette, `serifUI = false`. Remove all `serifUI` props — they are always false, so drop the prop entirely and the `serif-ui` class branches. |
 | `useReveal()` / `.kt-reveal` | Keep the class names for layout parity but content is always visible (tokens file already says "reveal-on-scroll removed"). Do NOT add IntersectionObserver. |
@@ -66,9 +66,9 @@ These rules are stated once; every task that ports prototype JSX must follow the
 │   │   ├── not-found.tsx · privacy/page.tsx
 │   │   ├── sitemap.ts · robots.ts
 │   │   ├── contact/page.tsx
-│   │   ├── home-guide/page.tsx
-│   │   ├── home-guide/[slug]/page.tsx
-│   │   ├── home-guide/[slug]/opengraph-image.tsx
+│   │   ├── newsletter/page.tsx
+│   │   ├── newsletter/[slug]/page.tsx
+│   │   ├── newsletter/[slug]/opengraph-image.tsx
 │   │   ├── resources/[slug]/page.tsx  # generateStaticParams over RESOURCE_PAGES, dynamicParams=false
 │   │   ├── neighborhoods/alameda-county/page.tsx
 │   │   ├── neighborhoods/contra-costa-county/page.tsx
@@ -243,7 +243,7 @@ export const NewsletterSchema = z.object({
 ### Task 1.10: CLAUDE.md (brand hard rules — README §4 + kt-brand skill)
 **Files:** `CLAUDE.md` at repo root.
 
-- [ ] Content: tokens table (§4); gold-on-dark / gold-deep-on-light NEVER swapped; Fraunces+Inter locked (NEVER Geist, preserve `opsz`); signature asymmetric top-left radius (buttons 12 / cards 24 / monogram 13 / dropdown 18); dark bookends on multi-section pages; INTERO re-typed Fraunces gold caps never logo image; no emoji; DRE compliance block contents; density locked `--dm: 1`; hero locked Full-bleed; blog section name locked "Home Guide" at `/home-guide/<slug>`; content drafts warning (§9); photo slot convention (`public/images/<slot-id>.jpg`); commands (`pnpm lint|typecheck|test|build`); design source of truth pointer; schema §7 immutable + lastName/phone→message note.
+- [ ] Content: tokens table (§4); gold-on-dark / gold-deep-on-light NEVER swapped; Fraunces+Inter locked (NEVER Geist, preserve `opsz`); signature asymmetric top-left radius (buttons 12 / cards 24 / monogram 13 / dropdown 18); dark bookends on multi-section pages; INTERO re-typed Fraunces gold caps never logo image; no emoji; DRE compliance block contents; density locked `--dm: 1`; hero locked Full-bleed; blog section name locked "Newsletter" at `/newsletter/<slug>`; content drafts warning (§9); photo slot convention (`public/images/<slot-id>.jpg`); commands (`pnpm lint|typecheck|test|build`); design source of truth pointer; schema §7 immutable + lastName/phone→message note.
 - [ ] Commit: `docs: CLAUDE.md brand hard rules + engineering conventions`
 
 **MILESTONE 1 GATE:** lint ✓ typecheck ✓ test ✓ build ✓ → commit, report.
@@ -257,7 +257,7 @@ export const NewsletterSchema = z.object({
 - [ ] Port exactly. Commit: `feat: Monogram + NavSocial`
 
 ### Task 2.2: ResourcesDrop + KTNav (port kt-hero.jsx:41-65, 88-129) — `'use client'`
-- [ ] Tests: renders About/Services/Testimonials anchors with `base` prefix (`/#about` when `base="/"` on subpages, `#about` on home); Home Guide link → `/home-guide`; dropdown opens on hover/click (9 items, exact labels/routes), caret rotates (`open` class); Contact button → `/contact`; `scrolled` class toggles on `window.scrollY > 40` (fire scroll event in test).
+- [ ] Tests: renders About/Services/Testimonials anchors with `base` prefix (`/#about` when `base="/"` on subpages, `#about` on home); Newsletter link → `/newsletter`; dropdown opens on hover/click (9 items, exact labels/routes), caret rotates (`open` class); Contact button → `/contact`; `scrolled` class toggles on `window.scrollY > 40` (fire scroll event in test).
 - [ ] A11y additions (visuals unchanged): dropdown closes on `Escape` and on blur-outside; trigger is `<button>` semantics via role and `aria-expanded`/`aria-haspopup` kept.
 - [ ] Commit: `feat: KTNav with Client Resources dropdown (scroll-solid, a11y)`
 
@@ -308,24 +308,24 @@ export const NewsletterSchema = z.object({
 - [ ] Tests: 8 total, 2 published-in-prod (env-stubbed), sorted desc, unique slugs, categories ⊆ KT_BLOG_CATS, real posts' titles/excerpts byte-match prototype strings.
 - [ ] Commit: `feat: typed post collection (2 real issues, 6 gated drafts)`
 
-### Task 4.2: Blog index `/home-guide` (port kt-blog.jsx minus tweaks)
-- [ ] BlogHero static ("The Bay Area *Home Guide*"); Featured (lead + 2, cover-conditional layout incl. `noimg` variant); Archive `'use client'`: chips filter, month grouping, sticky rail scroll-sync, empty-topic copy.
-- [ ] Tests: featured = 3 newest; chip filter narrows list; groups by month label; rail months match groups; all links `/home-guide/<slug>`.
-- [ ] Page: KTNav → BlogHero → light(Featured+Archive) → dark(KTNewsletter `archiveLink={false}` + KTFooter). Metadata: title "The Bay Area Home Guide".
-- [ ] Commit: `feat: Home Guide index (featured, topic chips, timeline rail)`
+### Task 4.2: Blog index `/newsletter` (port kt-blog.jsx minus tweaks)
+- [ ] BlogHero static ("The Bay Area *Newsletter*"); Featured (lead + 2, cover-conditional layout incl. `noimg` variant); Archive `'use client'`: chips filter, month grouping, sticky rail scroll-sync, empty-topic copy.
+- [ ] Tests: featured = 3 newest; chip filter narrows list; groups by month label; rail months match groups; all links `/newsletter/<slug>`.
+- [ ] Page: KTNav → BlogHero → light(Featured+Archive) → dark(KTNewsletter `archiveLink={false}` + KTFooter). Metadata: title "The Bay Area Newsletter".
+- [ ] Commit: `feat: Newsletter index (featured, topic chips, timeline rail)`
 
-### Task 4.3: Post reader `/home-guide/[slug]` (port kt-post.jsx)
+### Task 4.3: Post reader `/newsletter/[slug]` (port kt-post.jsx)
 - [ ] `generateStaticParams` from `publishedPosts`; `dynamicParams = false`; unknown slug → 404 via `notFound()`.
-- [ ] PostBody (server): block renderer exact (p/h2/cta/disclaimer/sources). ShareRow `'use client'`: canonical `SITE_URL/home-guide/<slug>` share targets (FB/LinkedIn/X/WhatsApp/email), copy-link with "Copied" 2.2s feedback + execCommand fallback. Prev/next cards from published order. Signature line + "Contact Kalyani" → `/contact`. Cover PhotoSlot 21/9 when `cover`.
+- [ ] PostBody (server): block renderer exact (p/h2/cta/disclaimer/sources). ShareRow `'use client'`: canonical `SITE_URL/newsletter/<slug>` share targets (FB/LinkedIn/X/WhatsApp/email), copy-link with "Copied" 2.2s feedback + execCommand fallback. Prev/next cards from published order. Signature line + "Contact Kalyani" → `/contact`. Cover PhotoSlot 21/9 when `cover`.
 - [ ] `generateMetadata`: title (ktPlain), description = excerpt, OG/Twitter card type article + image.
 - [ ] Tests: block renderer all 5 types; share URLs encoded correctly; copy feedback (mock clipboard); prev/next ordering; metadata shape.
 - [ ] Commit: `feat: statically generated post reader with share row + per-post meta`
 
 ### Task 4.4: Per-post OG image
-- [ ] `opengraph-image.tsx` (ImageResponse 1200×630): charcoal canvas, gold hairline frame (asymmetric 24px top-left), Fraunces title (load TTF from `src/assets/fonts/`, copy from kt-brand repo `assets/fonts/`), eyebrow "THE BAY AREA HOME GUIDE", footer "Kalyani Thilak · DRE 02254890 · Intero Real Estate Services".
+- [ ] `opengraph-image.tsx` (ImageResponse 1200×630): charcoal canvas, gold hairline frame (asymmetric 24px top-left), Fraunces title (load TTF from `src/assets/fonts/`, copy from kt-brand repo `assets/fonts/`), eyebrow "THE BAY AREA NEWSLETTER", footer "Kalyani Thilak · DRE 02254890 · Intero Real Estate Services".
 - [ ] Commit: `feat: branded per-post OG images`
 
-**MILESTONE 4 GATE:** gates + shots: `/home-guide` vs `Blog.html`, one post vs `Blog Post.html` → report.
+**MILESTONE 4 GATE:** gates + shots: `/newsletter` vs `Blog.html`, one post vs `Blog Post.html` → report.
 
 ---
 
@@ -354,10 +354,10 @@ export const NewsletterSchema = z.object({
 ## Milestone 6 — Meta/OG, privacy, 404, favicon, sitemap, Lighthouse (README §12.6)
 
 ### Task 6.1: icon.tsx (monogram favicon via ImageResponse: charcoal square, 1px gold border, top-left radius ≈26%, "KT" serif with gold T) + apple-icon.
-### Task 6.2: `not-found.tsx` — dark page, kt-display "Page not found", monogram, links home/Home Guide; metadata noindex.
+### Task 6.2: `not-found.tsx` — dark page, kt-display "Page not found", monogram, links home/Newsletter; metadata noindex.
 ### Task 6.3: `/privacy` — CCPA draft (categories collected: name/email/phone/message; purpose; no sale of PII; contact email; effective date; "review by counsel" HTML comment). Light shell + dark bookends.
 ### Task 6.4: `sitemap.ts` (all static routes + published posts) + `robots.ts` (allow all, sitemap URL).
-### Task 6.5: Lighthouse pass — `pnpm build && pnpm start`, run Lighthouse (via Playwright/`lighthouse` CLI) on `/`, `/home-guide`, one post; fix to ≥90 perf/SEO/a11y; record scores. Verify: zero render-blocking font CSS, fonts preloaded+subsetted, no dev React (acceptance §11.3).
+### Task 6.5: Lighthouse pass — `pnpm build && pnpm start`, run Lighthouse (via Playwright/`lighthouse` CLI) on `/`, `/newsletter`, one post; fix to ≥90 perf/SEO/a11y; record scores. Verify: zero render-blocking font CSS, fonts preloaded+subsetted, no dev React (acceptance §11.3).
 ### Task 6.6: Full route click-through (acceptance §11.4): Playwright script walks every nav/dropdown/footer link desktop+mobile, asserts 200 + h1.
 
 **MILESTONE 6 GATE:** gates + full shots gallery → report.

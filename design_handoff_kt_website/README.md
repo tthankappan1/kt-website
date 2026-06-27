@@ -37,8 +37,8 @@ Next 15 notes: `cookies()`/`headers()`/`params`/`searchParams` are async; fetch/
 |---|---|---|
 | `KT Home.html` | `/` | `kt-app.jsx`, `kt-hero.jsx`, `kt-body.jsx`, `kt-close.jsx` |
 | `Contact.html` | `/contact` | `kt-contact.jsx` |
-| `Blog.html` | `/home-guide` | `kt-blog.jsx`, `kt-blog-data.jsx` |
-| `Blog Post.html` (`?post=<slug>`) | `/home-guide/<slug>` | `kt-post.jsx`, `kt-blog-data.jsx` |
+| `Blog.html` | `/newsletter` | `kt-blog.jsx`, `kt-blog-data.jsx` |
+| `Blog Post.html` (`?post=<slug>`) | `/newsletter/<slug>` | `kt-post.jsx`, `kt-blog-data.jsx` |
 | `Selling.html` | `/resources/selling` | `kt-resource.jsx` + `kt-resources-data.jsx` |
 | `Buying.html` | `/resources/buying` | 〃 |
 | `Cost of Selling.html` | `/resources/cost-of-selling` | 〃 |
@@ -49,7 +49,7 @@ Next 15 notes: `cookies()`/`headers()`/`params`/`searchParams` are async; fetch/
 | `Alameda County Neighborhoods.html` | `/neighborhoods/alameda-county` | `kt-guide.jsx` + `kt-guide-alameda.jsx` |
 | `Contra Costa County Neighborhoods.html` | `/neighborhoods/contra-costa-county` | `kt-guide.jsx` + `kt-guide-contracosta.jsx` |
 
-Blog permalink scheme **`/home-guide/<slug>`** is the recommendation (matches the locked section name "Home Guide"); confirm with Kalyani before go-live — shared links live forever. Add at build: **privacy policy page** (CCPA — the lead form collects PII), **404 page**, **favicon from the KT monogram**.
+Blog permalink scheme **`/newsletter/<slug>`** is the recommendation (matches the locked section name "Newsletter"); confirm with Kalyani before go-live — shared links live forever. Add at build: **privacy policy page** (CCPA — the lead form collects PII), **404 page**, **favicon from the KT monogram**.
 
 ## 4. Design tokens (authoritative source: `design/kt-tokens.css`)
 
@@ -67,11 +67,11 @@ Blog permalink scheme **`/home-guide/<slug>`** is the recommendation (matches th
 - **Signature shape:** hairline 1px borders with an **asymmetric top-left radius** (buttons 12px, cards 24px, monogram 13px, dropdown 18px…). This is THE brand shape — never plain rounded corners.
 - **Layout:** max-width 1200px container, 48px gutters (24px ≤900px), 96px section padding.
 - **Hard rules:** multi-section pages **bookend in dark** (dark nav/hero at top + dark newsletter/footer at bottom); "INTERO" is always re-typed in Fraunces gold caps, never their logo image; **no emoji** anywhere; gold on dark / gold-deep on light, never swapped.
-- **Hardcode the prototype's tweak defaults** (the Tweaks panel itself is prototype-only, do not build it): hero = **Full-bleed**, density = **Regular** (`--dm: 1`), palette = default charcoal/ivory/gold, serifUI = **false**. Delete every `localStorage` switch (e.g. `kt-blog-nav` → hardcode "Home Guide").
+- **Hardcode the prototype's tweak defaults** (the Tweaks panel itself is prototype-only, do not build it): hero = **Full-bleed**, density = **Regular** (`--dm: 1`), palette = default charcoal/ivory/gold, serifUI = **false**. Delete every `localStorage` switch (e.g. `kt-blog-nav` → hardcode "Newsletter").
 
 ## 5. Shared components (build once, used everywhere)
 
-**Nav (`KTNav` in `kt-hero.jsx`):** fixed, transparent over dark heroes → solid charcoal + tighter padding on scroll. Lockup (left → right): KT monogram (50px, links home) · "KALYANI THILAK" wordmark + "REALTOR® · TRI-VALLEY" sub-line · 1px gold divider · "INTERO" gold serif caps. Links: About / Services / Testimonials / **Home Guide** / Client Resources (dropdown, 9 items, hover-open with caret rotate) / social icons / Contact button. Responsive: divider+INTERO hide ≤1100px; monogram 50→40→34px (never hidden); header socials hide ≤1024px (footer set remains). On non-home pages the About/Services/Testimonials anchors point to `/#about` etc.
+**Nav (`KTNav` in `kt-hero.jsx`):** fixed, transparent over dark heroes → solid charcoal + tighter padding on scroll. Lockup (left → right): KT monogram (50px, links home) · "KALYANI THILAK" wordmark + "REALTOR® · TRI-VALLEY" sub-line · 1px gold divider · "INTERO" gold serif caps. Links: About / Services / Testimonials / **Newsletter** / Client Resources (dropdown, 9 items, hover-open with caret rotate) / social icons / Contact button. Responsive: divider+INTERO hide ≤1100px; monogram 50→40→34px (never hidden); header socials hide ≤1024px (footer set remains). On non-home pages the About/Services/Testimonials anchors point to `/#about` etc.
 
 **Footer (`KTFooter` in `kt-close.jsx`):** dark, 3-column grid. Compliance block must include: "Intero Real Estate Services" · "A Berkshire Hathaway Affiliate" · DRE 02254890 · 187 S J Street, Livermore. Contact column: `kthilak@intero.com` · `(408) 597-7371` · social icons.
 
@@ -123,7 +123,7 @@ create unique index newsletter_signups_email_idx on newsletter_signups (lower(em
 ## 8. Blog content model & publishing (decided: git-push)
 
 - Posts live **in the repo** (port `KT_POSTS` from `kt-blog-data.jsx` to one MDX/JSON/TS file per post — content collection style). Publishing a post = add file → git push → Vercel auto-deploys (~1 min). No CMS in v1.
-- Statically generate every `/home-guide/<slug>` page via `generateStaticParams`.
+- Statically generate every `/newsletter/<slug>` page via `generateStaticParams`.
 - Per-post `<head>` meta: title, description (= excerpt), OG/Twitter image — share row must produce rich previews.
 - The blog IS the weekly newsletter archive. Two posts are real issues (`proximity-premium-san-jose`, `two-markets-twenty-minutes`); the other 6 are **drafts to be replaced — do not ship them**.
 - Cover images are opt-in per post (`cover: true`); no placeholder when absent — clean typographic card.
@@ -143,7 +143,7 @@ Every photo location in the prototype is an `image-slot.js` drop-zone with a sta
 ## 11. Acceptance bar
 
 1. Pixel-faithful to the prototype on desktop AND mobile (the prototype is responsive — match its breakpoints).
-2. Lighthouse performance / SEO / accessibility pass on `/`, `/home-guide`, and one post page.
+2. Lighthouse performance / SEO / accessibility pass on `/`, `/newsletter`, and one post page.
 3. No Babel/dev-React/render-blocking font CSS in production; fonts preloaded + subsetted.
 4. Full click-through of every nav/dropdown route, desktop + mobile.
 5. Lead + newsletter submissions land in Supabase; invalid payloads rejected with Zod errors.

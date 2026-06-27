@@ -1,8 +1,8 @@
 import { chromium } from 'playwright'
 const BASE = 'http://localhost:3000'
 const PAGES = [
-  '/', '/contact', '/home-guide',
-  '/home-guide/proximity-premium-san-jose', '/home-guide/two-markets-twenty-minutes',
+  '/', '/contact', '/newsletter',
+  '/newsletter/proximity-premium-san-jose', '/newsletter/two-markets-twenty-minutes',
   '/resources/selling', '/resources/buying', '/resources/cost-of-selling',
   '/resources/intero-concierge', '/resources/schools', '/resources/market-updates',
   '/resources/buyers-guide',
@@ -10,7 +10,7 @@ const PAGES = [
   '/privacy',
 ]
 const ASSETS = ['/icon', '/apple-icon', '/opengraph-image', '/sitemap.xml', '/robots.txt',
-  '/home-guide/proximity-premium-san-jose/opengraph-image']
+  '/newsletter/proximity-premium-san-jose/opengraph-image']
 const browser = await chromium.launch()
 let fail = 0
 for (const vp of [{tag:'desktop',width:1440,height:900},{tag:'mobile',width:390,height:844}]) {

@@ -81,7 +81,7 @@ describe('PostPage — middle post', () => {
     render(await PostPage({ params: Promise.resolve({ slug: 'middle-post' }) }))
     // older = FAKE_POSTS[2] = oldest-post
     const link = screen.getByRole('link', { name: /Previous issue/i })
-    expect(link.getAttribute('href')).toBe('/home-guide/oldest-post')
+    expect(link.getAttribute('href')).toBe('/newsletter/oldest-post')
     expect(link.textContent).toContain('Oldest Post Title')
   })
 
@@ -89,7 +89,7 @@ describe('PostPage — middle post', () => {
     render(await PostPage({ params: Promise.resolve({ slug: 'middle-post' }) }))
     // newer = FAKE_POSTS[0] = newest-post
     const link = screen.getByRole('link', { name: /Next issue/i })
-    expect(link.getAttribute('href')).toBe('/home-guide/newest-post')
+    expect(link.getAttribute('href')).toBe('/newsletter/newest-post')
     expect(link.textContent).toContain('Newest Post Title')
   })
 })
@@ -114,13 +114,13 @@ describe('generateMetadata', () => {
   it('includes openGraph with correct url', async () => {
     const meta = await generateMetadata({ params: Promise.resolve({ slug: 'middle-post' }) })
     const og = meta.openGraph as Record<string, unknown>
-    expect(og?.url).toBe(SITE_URL + '/home-guide/middle-post')
+    expect(og?.url).toBe(SITE_URL + '/newsletter/middle-post')
     expect(og?.type).toBe('article')
   })
 
   it('sets alternates.canonical to the slug path', async () => {
     const meta = await generateMetadata({ params: Promise.resolve({ slug: 'middle-post' }) })
-    expect(meta.alternates?.canonical).toBe('/home-guide/middle-post')
+    expect(meta.alternates?.canonical).toBe('/newsletter/middle-post')
   })
 
   it('returns empty object for unknown slug', async () => {

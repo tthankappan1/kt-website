@@ -14,7 +14,7 @@ const { ShareRow } = await import('../share-row')
 
 const TEST_SLUG = 'test-slug-123'
 const TEST_TITLE = 'Test Post Title'
-const TEST_URL = SITE_URL + '/home-guide/' + TEST_SLUG
+const TEST_URL = SITE_URL + '/newsletter/' + TEST_SLUG
 
 describe('ShareRow', () => {
   beforeEach(() => {

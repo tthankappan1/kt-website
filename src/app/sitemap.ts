@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: LAST_MODIFIED, changeFrequency: 'weekly', priority: 1 },
     { url: `${SITE_URL}/contact`, lastModified: LAST_MODIFIED, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${SITE_URL}/home-guide`, lastModified: LAST_MODIFIED, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${SITE_URL}/newsletter`, lastModified: LAST_MODIFIED, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${SITE_URL}/privacy`, lastModified: LAST_MODIFIED, changeFrequency: 'yearly', priority: 0.6 },
     {
       url: `${SITE_URL}/neighborhoods/alameda-county`,
@@ -36,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   const postRoutes: MetadataRoute.Sitemap = posts.map(post => ({
-    url: `${SITE_URL}/home-guide/${post.slug}`,
+    url: `${SITE_URL}/newsletter/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: 'monthly' as const,
     priority: 0.7,

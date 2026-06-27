@@ -9,7 +9,7 @@ Personal real-estate site for **Kalyani Thilak** — REALTOR®, Intero Real Esta
 ## Decisions locked in
 - **Header lockup = Option C**: KT monogram (clickable, 50px) · "KALYANI THILAK" with sub-line "REALTOR® · TRI-VALLEY" · thin gold divider · "INTERO" in gold serif caps. Divider+INTERO hide ≤1100px; monogram scales 50→40→34px, never hidden. Comparison page kept at `Header Lockups v2.html` (the design-canvas version `Header Lockups.html` is deprecated — its saved pan position kept losing users).
 - **Footer**: compliance block includes "Intero Real Estate Services" + "A Berkshire Hathaway Affiliate" + DRE 02254890 + 187 S J Street, Livermore.
-- **Nav order (final, assessed)**: About / Services / Testimonials / **Home Guide** (blog link, label from `localStorage['kt-blog-nav']`) / Client Resources (dropdown last — carets read best at end of link group) / FB·LinkedIn·IG icons / Contact button → `Contact.html`.
+- **Nav order (final, assessed)**: About / Services / Testimonials / **Newsletter** (blog link, label from `localStorage['kt-blog-nav']`) / Client Resources (dropdown last — carets read best at end of link group) / FB·LinkedIn·IG icons / Contact button → `Contact.html`.
 - Real socials (wired in `kt-hero.jsx` KT_SOCIALS):
   - FB: https://www.facebook.com/profile.php?id=100076622906268
   - IG: https://www.instagram.com/kalyani_thilak_intero/
@@ -31,7 +31,7 @@ Personal real-estate site for **Kalyani Thilak** — REALTOR®, Intero Real Esta
   - `kt-blog-data.jsx` — TWO REAL ISSUES (from `uploads/Newsletter_May_Week4_2.html` / `_3.html`): `proximity-premium-san-jose` (2026-05-29) and `two-markets-twenty-minutes` (2026-05-27); remaining 6 posts are GENERIC DRAFTS. Body block types: string para (`*italic*`/`**bold**` via `ktInline`), `{h}`, `{cta}` (gold-tint callout per brand newsletter template), `{disclaimer}`, `{sources:[{t,href}]}`. Titles support `*word*` for gold-italic emphasis. Adding a post = one object in `KT_POSTS`. Cover image-slot id = `blog-<slug>` (shared between index card and reader hero — drop once).
   - Reader page has a **share row** (FB / LinkedIn / X / WhatsApp / email + Copy-link with “Copied” feedback) — charcoal at rest, hover-to-native colors, canonical `?post=<slug>` URL — and a “Contact Kalyani” button after the signature line.
   - **PUBLISHING WORKFLOW DECIDED (June 2026): git-push redeploy** — posts data as standalone content files in the repo, push to publish, static host auto-deploys (~1 min). No CMS for v1. Post URLs are `?post=<slug>` in the prototype — final permalink scheme (e.g. `/guide/<slug>`) must still be chosen before go-live since shared links live forever.
-  - **Section name DECIDED: "Home Guide"** (already the default in the tweak + `localStorage['kt-blog-nav']`). Hardcode at build; filename `Blog.html` is intentionally name-neutral.
+  - **Section name DECIDED: "Newsletter"** (already the default in the tweak + `localStorage['kt-blog-nav']`). Hardcode at build; filename `Blog.html` is intentionally name-neutral.
   - Newsletter section site-wide now links "Browse past issues →" to Blog.html (suppressed on the blog page itself via `archiveLink={false}`).
   - Cover images are **opt-in per post** (`cover: true` → drop-zone on index card + reader hero, same image under id `blog-<slug>`; absent → clean typographic card, no placeholder). Currently only `spotlight-ruby-hill` and `saturday-downtown-livermore` have covers.
 
@@ -44,13 +44,13 @@ Personal real-estate site for **Kalyani Thilak** — REALTOR®, Intero Real Esta
 - Acceptance bar before go-live: Lighthouse perf/SEO/a11y pass on the blog index and a post page.
 
 ## Pre-build handoff checklist (final assessment, June 2026)
-**Blockers:** ~~(1) email~~ → kthilak@intero.com (interim) + domain kalyanithilak.com — DONE; ~~(2) publishing workflow~~ → git-push redeploy — DECIDED; ~~(3) blog section name~~ → Home Guide — DECIDED; (4) lead + newsletter destination DECIDED: **simple Supabase DB** capturing both lead-form submissions and newsletter opt-ins (user will build their own lightweight CRM product on top later) — wire `KT_CRM.submit()` adapter + newsletter signups to Supabase at build.
+**Blockers:** ~~(1) email~~ → kthilak@intero.com (interim) + domain kalyanithilak.com — DONE; ~~(2) publishing workflow~~ → git-push redeploy — DECIDED; ~~(3) blog section name~~ → Newsletter — DECIDED; (4) lead + newsletter destination DECIDED: **simple Supabase DB** capturing both lead-form submissions and newsletter opt-ins (user will build their own lightweight CRM product on top later) — wire `KT_CRM.submit()` adapter + newsletter signups to Supabase at build.
 **User-owned content:** (5) replace/verify ALL generic resource-page copy + guide prices/commutes (plausible-sounding drafts — credibility risk if shipped); (6) confirm testimonials are real + permissioned; (7) replace or drop the 6 draft blog posts.
 **Build-stage additions:** (8) privacy policy page (CCPA — lead form collects PII), 404 page, favicon from KT monogram; (9) day-one home hero photo (rest can follow per PHOTOS.md); (10) full desktop+mobile click-through of every nav/dropdown route.
 Production stack requirements + acceptance bar: see section above. This doc + PHOTOS.md = the handoff package.
 
 ## Open / next steps
-1. Replace the remaining 6 draft posts in `kt-blog-data.jsx` with real newsletter issues (2 real ones already in). Section name locked: Home Guide.
+1. Replace the remaining 6 draft posts in `kt-blog-data.jsx` with real newsletter issues (2 real ones already in). Section name locked: Newsletter.
 1. Minor tweaks from user review (expected before Claude CLI / build handoff — user confirmed this is the plan). DONE June 2026: home CTAs fixed — hero "Start a conversation"/"Contact", intro "Work with Kalyani" now go to `Contact.html` (previously hit the `#contact` footer anchor and landed on the newsletter signup); services "Learn more" links now go to Buying.html / Selling.html / Market Updates.html.
 2. Replace generic resource-page copy with real program details; verify all guide prices/commutes/school claims.
 3. ~~Real email~~ — kthilak@intero.com in footer; revisit if a kalyanithilak.com mailbox is set up.
