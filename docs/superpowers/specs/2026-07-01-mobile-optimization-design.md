@@ -1,7 +1,7 @@
 # Mobile optimization — design spec
 
 **Date:** 2026-07-01
-**Status:** Draft — awaiting owner approval (two assumed decisions flagged below)
+**Status:** Approved by owner 2026-07-01 — all three flagged decisions approved (menu pattern, whole-site scope, --sect-pad 72px ≤700px)
 **Context:** kalyanithilak.com has been live ~2 weeks; analytics show ~80% of
 visitors on mobile. The site was built desktop-first against the design
 handoff prototype, which never specified a nav below ~800px. This spec covers

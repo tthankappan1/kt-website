@@ -20,6 +20,7 @@ describe('mobile optimization CSS (spec 2026-07-01)', () => {
     expect(css).toMatch(/\.kt-mobile-menu \{[\s\S]{0,300}position: fixed;\s*inset: 0;/)
     expect(css).toMatch(/\.kt-mobile-menu \{[\s\S]{0,400}background: var\(--charcoal\);/)
     expect(css).toMatch(/\.kt-mobile-menu \{[\s\S]{0,400}z-index: 70;/)
+    expect(css).toMatch(/\.kt-mobile-menu \{[\s\S]{0,500}overscroll-behavior: contain;/)
   })
 
   it('menu links are Fraunces serif with opsz 36', () => {
@@ -48,6 +49,7 @@ describe('mobile optimization CSS (spec 2026-07-01)', () => {
   it('carousel dots keep a 32×2 bar but gain a 44px hit area on mobile', () => {
     expect(css).toMatch(/\.kt-dot-bar \{[\s\S]{0,200}width: 32px;\s*height: 2px;/)
     expect(css).toMatch(/@media \(max-width: 900px\)[\s\S]{0,800}\.kt-dot \{ min-width: 44px; min-height: 44px; \}/)
+    expect(css).toMatch(/\.kt-dot-bar \{[\s\S]{0,300}transition: background 0\.3s;/)
   })
 
   it('newsletter form stacks at ≤560px with a full-width button', () => {

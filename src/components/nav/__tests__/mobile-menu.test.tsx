@@ -47,8 +47,10 @@ describe('MobileMenu', () => {
   it('locks body scroll while mounted and restores on unmount', () => {
     const { unmount } = render(<MobileMenu onClose={() => {}} />)
     expect(document.body.style.overflow).toBe('hidden')
+    expect(document.documentElement.style.overflow).toBe('hidden')
     unmount()
     expect(document.body.style.overflow).toBe('')
+    expect(document.documentElement.style.overflow).toBe('')
   })
 
   it('focuses the close button on mount', () => {
@@ -76,5 +78,15 @@ describe('MobileMenu', () => {
     expect(document.activeElement).toBe(focusables[0])
     fireEvent.keyDown(dialog, { key: 'Tab', shiftKey: true })
     expect(document.activeElement).toBe(last)
+  })
+
+  it('reclaims focus into the panel if activeElement escaped it (e.g. after a collapse removed the focused node)', () => {
+    render(<MobileMenu base="/" onClose={() => {}} />)
+    const dialog = screen.getByRole('dialog')
+    const focusables = dialog.querySelectorAll<HTMLElement>('a[href], button')
+    const first = focusables[0]
+    ;(document.activeElement as HTMLElement).blur()
+    fireEvent.keyDown(dialog, { key: 'Tab' })
+    expect(document.activeElement).toBe(first)
   })
 })

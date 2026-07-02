@@ -59,6 +59,9 @@ for (const width of WIDTHS) {
   const page = await ctx.newPage()
   await page.goto(BASE + '/', { waitUntil: 'networkidle' })
   await page.getByRole('button', { name: 'Open menu' }).tap()
+  // The menu has a 0.25s entry animation (kt-menu-in); wait it out so the
+  // screenshot doesn't capture a mid-fade frame.
+  await page.waitForTimeout(300)
   await page.screenshot({ path: `${OUT}/menu-open-390.png` })
   const scrollLocked = await page.evaluate(() => document.body.style.overflow === 'hidden')
   await page.getByRole('link', { name: 'Newsletter' }).tap()

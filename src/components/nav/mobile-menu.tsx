@@ -19,10 +19,13 @@ export function MobileMenu({ base = '', onClose }: MobileMenuProps) {
   const [resourcesOpen, setResourcesOpen] = useState(false)
 
   useEffect(() => {
-    const prev = document.body.style.overflow
+    const prevHtml = document.documentElement.style.overflow
+    const prevBody = document.body.style.overflow
+    document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     return () => {
-      document.body.style.overflow = prev
+      document.documentElement.style.overflow = prevHtml
+      document.body.style.overflow = prevBody
     }
   }, [])
 
@@ -40,6 +43,11 @@ export function MobileMenu({ base = '', onClose }: MobileMenuProps) {
     if (focusables.length === 0) return
     const first = focusables[0]
     const last = focusables[focusables.length - 1]
+    if (!panelRef.current.contains(document.activeElement)) {
+      e.preventDefault()
+      first.focus()
+      return
+    }
     if (e.shiftKey && document.activeElement === first) {
       e.preventDefault()
       last.focus()
