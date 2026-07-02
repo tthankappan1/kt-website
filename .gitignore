@@ -11,6 +11,10 @@ coverage/
 
 # screenshots harness output
 shots/
+shots-mobile/
+
+# subagent-driven-development scratch (briefs, reports, review packages)
+.superpowers/
 
 # env — never commit secrets
 .env
