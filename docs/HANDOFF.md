@@ -64,6 +64,21 @@ Read-only audit across 4 lenses (API/abuse, secrets/RLS, XSS/client, headers/dep
 10. Confirm interim email `kthilak@intero.com` vs a kalyanithilak.com mailbox.
 11. Have **legal counsel review `/privacy`** (drafted, flagged in-code).
 
+## Mobile optimization update (July 2026)
+
+_Shipped in PR #2, merged 2026-07-02; owner-verified on a real phone. Analytics showed ~80% of visitors on mobile, and the prototype never specified a nav below ~800px — links wrapped and clipped over the hero on every page._
+
+**What shipped:** a net-new full-screen mobile menu (hamburger ≤900px → charcoal panel: Fraunces links, inline Client Resources, Contact, socials, INTERO lockup; html+body scroll lock + `overscroll-behavior: contain`, focus trap, Escape/link-tap close, focus returned to the trigger), hero `svh` viewport units, testimonial mobile padding + 44px carousel-dot hit areas, newsletter form stacking ≤560px, contact field pairs collapsing ≤480px, 16px inputs ≤900px (prevents iOS focus auto-zoom), and section padding 96→72px ≤700px (owner-approved exception to the locked 96px value — precedent: gutters already drop at 900px). Desktop ≥901px is pixel-unchanged. Spec/plan: `docs/superpowers/specs/2026-07-01-mobile-optimization-design.md`, `docs/superpowers/plans/2026-07-01-mobile-optimization.md`. Test count now **463**.
+
+**New verification tooling:** `node scripts/mobile-verify.mjs` against a running build — screenshots + zero-horizontal-overflow audit across 8 routes × 360/390/768px widths, plus a menu open/scroll-lock/navigate check. Run it after any layout-touching change, alongside `pnpm shots` for desktop parity.
+
+**Deferred polish (reviewed, accepted as ship-as-is — pick up if ever touching the menu):**
+1. `aria-controls` on the burger and the Client Resources button points at ids that don't exist while closed (menu/sub-list are conditionally mounted). Optional fix: keep the sub-list mounted and toggle the `hidden` attribute (the desktop `ResourcesDrop` pattern).
+2. Menu close is instant (conditional unmount); only opening animates (0.25s, reduced-motion aware). Add an exit animation only if it ever feels abrupt on-device.
+3. Focus-trap hardening variant: when collapsing Client Resources removes the focused sub-item, refocus the group button (current guard already recaptures Tab into the panel).
+4. `mobile-menu.tsx` has two separate mount effects (scroll lock, focus) — could merge; purely stylistic.
+5. Blog share-row buttons remain 40px (spec-accepted; below the 44px ideal).
+
 ## Maintenance notes
 - Publish a post = add `src/content/posts/<slug>.ts` + one import line in `index.ts`, then push.
 - Brand rules + locked decisions live in `CLAUDE.md`. The `.kt-*` CSS in `globals.css` is a verbatim port of the design system — extend with net-new rules, don't restyle.
