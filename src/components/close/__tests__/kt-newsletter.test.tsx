@@ -167,4 +167,11 @@ describe('KTNewsletter', () => {
       expect(screen.getByText('You are on the list. Welcome.')).toBeInTheDocument()
     })
   })
+
+  it('form uses kt-news-form class (stacks ≤560px via CSS) with no inline flex style', () => {
+    const { container } = render(<KTNewsletter />)
+    const form = container.querySelector('form')
+    expect(form?.classList.contains('kt-news-form')).toBe(true)
+    expect(form?.getAttribute('style')).toBeNull()
+  })
 })
