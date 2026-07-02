@@ -43,7 +43,7 @@ export function KTTestimonials() {
           <p className="kt-eyebrow on-dark" style={{ color: 'var(--gold)' }}>
             What clients say
           </p>
-          <blockquote style={{ minHeight: '150px' }}>
+          <blockquote className="kt-quote-well">
             <p
               style={{
                 fontFamily: 'var(--serif)',
@@ -82,20 +82,12 @@ export function KTTestimonials() {
             </p>
             <div data-testid="testimonial-dots" style={{ display: 'flex', gap: '10px' }}>
               {KT_QUOTES.map((_, i) => (
-                <button
-                  key={i}
-                  aria-label={`Quote ${i + 1}`}
-                  onClick={() => setIdx(i)}
-                  style={{
-                    width: '32px',
-                    height: '2px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                    background: i === idx ? 'var(--gold)' : 'rgba(192,162,120,0.3)',
-                    transition: 'background 0.3s',
-                  }}
-                />
+                <button key={i} aria-label={`Quote ${i + 1}`} onClick={() => setIdx(i)} className="kt-dot">
+                  <span
+                    className="kt-dot-bar"
+                    style={{ background: i === idx ? 'var(--gold)' : 'rgba(192,162,120,0.3)' }}
+                  />
+                </button>
               ))}
             </div>
           </div>

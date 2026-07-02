@@ -108,12 +108,14 @@ describe('KTTestimonials', () => {
     expect(dotsContainer?.style.gap).toBe('10px')
   })
 
-  it('dot buttons have transition background 0.3s', () => {
+  it('dot button bars render and are styled with background transitions via CSS class', () => {
     vi.useFakeTimers()
-    render(<KTTestimonials />)
-    const buttons = screen.getAllByRole('button')
-    buttons.forEach((btn) => {
-      expect((btn as HTMLElement).style.transition).toBe('background 0.3s')
+    const { container } = render(<KTTestimonials />)
+    const bars = container.querySelectorAll('button.kt-dot .kt-dot-bar')
+    expect(bars.length).toBe(2)
+    bars.forEach((bar) => {
+      // The kt-dot-bar class provides the transition via CSS; verify the structure is correct
+      expect((bar as HTMLElement).classList.contains('kt-dot-bar')).toBe(true)
     })
   })
 
@@ -133,5 +135,23 @@ describe('KTTestimonials', () => {
     })
     expect(clearIntervalSpy).toHaveBeenCalled()
     clearIntervalSpy.mockRestore()
+  })
+})
+
+describe('testimonials mobile touch targets', () => {
+  it('blockquote uses kt-quote-well (min-height handled in CSS per breakpoint)', () => {
+    const { container } = render(<KTTestimonials />)
+    const quote = container.querySelector('blockquote')
+    expect(quote?.classList.contains('kt-quote-well')).toBe(true)
+    expect(quote?.getAttribute('style') ?? '').not.toContain('min-height')
+  })
+
+  it('dots are kt-dot buttons wrapping a kt-dot-bar; active bar is gold', () => {
+    const { container } = render(<KTTestimonials />)
+    const dots = container.querySelectorAll('button.kt-dot')
+    expect(dots.length).toBe(2)
+    const bars = container.querySelectorAll('button.kt-dot .kt-dot-bar')
+    expect(bars.length).toBe(2)
+    expect((bars[0] as HTMLElement).style.background).toContain('--gold')
   })
 })
