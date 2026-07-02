@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { Monogram } from '@/components/ui/monogram'
 import { NavSocial } from '@/components/nav/nav-social'
 import { ResourcesDrop } from '@/components/nav/resources-drop'
+import { MobileMenu } from '@/components/nav/mobile-menu'
 
 interface KTNavProps {
   base?: string
@@ -12,12 +13,19 @@ interface KTNavProps {
 
 export function KTNav({ base = '' }: KTNavProps) {
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const burgerRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll)
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false)
+    burgerRef.current?.focus()
   }, [])
 
   return (
@@ -43,7 +51,20 @@ export function KTNav({ base = '' }: KTNavProps) {
           <NavSocial />
           <Link className="kt-btn btn-ghost-dark" href="/contact" style={{ padding: '10px 22px' }}>Contact</Link>
         </div>
+        <button
+          ref={burgerRef}
+          className="kt-burger"
+          aria-label="Open menu"
+          aria-expanded={menuOpen}
+          aria-controls="kt-mobile-menu"
+          onClick={() => setMenuOpen(true)}
+        >
+          <svg width="22" height="14" viewBox="0 0 22 14" fill="none" aria-hidden="true">
+            <path d="M1 1h20M1 13h20" stroke="currentColor" strokeWidth="1.2" />
+          </svg>
+        </button>
       </div>
+      {menuOpen ? <MobileMenu base={base} onClose={closeMenu} /> : null}
     </nav>
   )
 }
