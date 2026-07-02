@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { render, screen, act } from '@testing-library/react'
+import { render, screen, act, fireEvent, within } from '@testing-library/react'
 import { KTNav } from '@/components/nav/kt-nav'
 
 describe('KTNav', () => {
@@ -73,5 +73,35 @@ describe('KTNav', () => {
     render(<KTNav base="" />)
     const aboutLink = screen.getByRole('link', { name: 'About' })
     expect(aboutLink.getAttribute('href')).toBe('#about')
+  })
+})
+
+describe('KTNav mobile menu', () => {
+  it('renders a burger button, menu closed initially', () => {
+    render(<KTNav base="/" />)
+    const burger = screen.getByRole('button', { name: 'Open menu' })
+    expect(burger.getAttribute('aria-expanded')).toBe('false')
+    expect(burger.getAttribute('aria-controls')).toBe('kt-mobile-menu')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('burger opens the menu; close button closes it and returns focus to the burger', () => {
+    render(<KTNav base="/" />)
+    const burger = screen.getByRole('button', { name: 'Open menu' })
+    fireEvent.click(burger)
+    expect(burger.getAttribute('aria-expanded')).toBe('true')
+    const dialog = screen.getByRole('dialog', { name: 'Menu' })
+    expect(within(dialog).getByRole('link', { name: 'About' }).getAttribute('href')).toBe('/#about')
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Close menu' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(document.activeElement).toBe(burger)
+  })
+
+  it('menu closes when a menu link is clicked', () => {
+    render(<KTNav base="/" />)
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }))
+    const dialog = screen.getByRole('dialog', { name: 'Menu' })
+    fireEvent.click(within(dialog).getByRole('link', { name: 'Newsletter' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 })

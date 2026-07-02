@@ -3,7 +3,7 @@ import { PhotoSlot } from '@/components/ui/photo-slot'
 
 export function HeroFull() {
   return (
-    <header id="top" className="bg-dark on-dark" style={{ position: 'relative', minHeight: '94vh' }}>
+    <header id="top" className="bg-dark on-dark kt-hero-full" style={{ position: 'relative' }}>
       <PhotoSlot
         id="hero-full-img"
         alt="Tri-Valley hills at dusk, Pleasanton"
@@ -21,15 +21,13 @@ export function HeroFull() {
         }}
       />
       <div
-        className="kt-container"
+        className="kt-container kt-hero-full-inner"
         style={{
           position: 'relative',
           zIndex: 4,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-end',
-          minHeight: '94vh',
-          paddingBottom: '12vh',
           pointerEvents: 'none',
         }}
       >

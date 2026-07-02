@@ -55,7 +55,7 @@ export function KTNewsletter({ archiveLink = true }: { archiveLink?: boolean }) 
               You are on the list. Welcome.
             </p>
           ) : (
-            <form onSubmit={submit} noValidate style={{ display: 'flex', gap: '12px' }}>
+            <form onSubmit={submit} noValidate className="kt-news-form">
               {/* Visually hidden honeypot — inside form so bots see it in form.elements */}
               <span className="kt-visually-hidden">
                 <input

@@ -38,3 +38,21 @@ describe('HeroFull', () => {
     expect(slot).toBeInTheDocument()
   })
 })
+
+describe('HeroFull mobile viewport units', () => {
+  it('header uses the kt-hero-full class (svh-safe min-height lives in CSS)', () => {
+    const { container } = render(<HeroFull />)
+    const header = container.querySelector('header#top')
+    expect(header?.classList.contains('kt-hero-full')).toBe(true)
+    expect(header?.getAttribute('style') ?? '').not.toContain('min-height')
+  })
+
+  it('inner container uses kt-hero-full-inner and drops inline min-height/padding-bottom', () => {
+    const { container } = render(<HeroFull />)
+    const inner = container.querySelector('.kt-hero-full-inner')
+    expect(inner).toBeInTheDocument()
+    expect(inner?.classList.contains('kt-container')).toBe(true)
+    expect(inner?.getAttribute('style') ?? '').not.toContain('min-height')
+    expect(inner?.getAttribute('style') ?? '').not.toContain('padding-bottom')
+  })
+})
