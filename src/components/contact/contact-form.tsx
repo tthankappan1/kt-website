@@ -172,14 +172,7 @@ export function ContactForm() {
       )}
 
       {/* Name grid — issue 3: kt-field-label; issue 4: marginBottom 28px */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '20px',
-          marginBottom: '28px',
-        }}
-      >
+      <div className="grid-form-pair">
         <div>
           <label className="kt-field-label" htmlFor="firstName">
             First name
@@ -211,14 +204,7 @@ export function ContactForm() {
       </div>
 
       {/* Contact grid — issue 3: kt-field-label; issue 4: marginBottom 28px */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '20px',
-          marginBottom: '28px',
-        }}
-      >
+      <div className="grid-form-pair">
         <div>
           <label className="kt-field-label" htmlFor="email">
             Email

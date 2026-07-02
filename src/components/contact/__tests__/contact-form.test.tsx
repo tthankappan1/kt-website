@@ -205,17 +205,17 @@ describe('ContactForm', () => {
 
   it('name and contact grids use marginBottom 28px (issue 4)', () => {
     const { container } = render(<ContactForm />)
-    const grids = container.querySelectorAll('div[style]')
+    const grids = container.querySelectorAll('.grid-form-pair')
     const nameGrid = Array.from(grids).find((el) =>
       el.querySelector('label[for="firstName"]'),
     ) as HTMLElement | undefined
     expect(nameGrid).toBeDefined()
-    expect(nameGrid!.style.marginBottom).toBe('28px')
+    expect(nameGrid).toHaveClass('grid-form-pair')
     const contactGrid = Array.from(grids).find((el) =>
       el.querySelector('label[for="email"]'),
     ) as HTMLElement | undefined
     expect(contactGrid).toBeDefined()
-    expect(contactGrid!.style.marginBottom).toBe('28px')
+    expect(contactGrid).toHaveClass('grid-form-pair')
   })
 
   it('message wrapper uses marginBottom 28px (issue 4)', () => {
@@ -429,5 +429,15 @@ describe('ContactForm', () => {
     // Switch to Buying — timeframe section must still show with Ready now still selected
     await user.click(screen.getByRole('button', { name: 'Buying' }))
     expect(screen.getByRole('button', { name: 'Ready now' }).className).toContain('sel')
+  })
+
+  it('name and email/phone pairs use grid-form-pair (collapses ≤480px via CSS)', () => {
+    const { container } = render(<ContactForm />)
+    const pairs = container.querySelectorAll('.grid-form-pair')
+    expect(pairs.length).toBe(2)
+    pairs.forEach((pair) => {
+      expect(pair.getAttribute('style')).toBeNull()
+      expect(pair.querySelectorAll('input').length).toBe(2)
+    })
   })
 })
