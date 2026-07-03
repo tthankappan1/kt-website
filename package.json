@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "ingest": "node scripts/ingest-post.mjs",
     "shots": "node scripts/shots.mjs",
     "verify:routes": "node scripts/clickthrough.mjs",
     "verify:lighthouse": "node scripts/lh.mjs"
