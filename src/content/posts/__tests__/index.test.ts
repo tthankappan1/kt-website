@@ -14,9 +14,23 @@ describe('posts index', () => {
     return mod
   }
 
-  it('allPosts has 9 entries', async () => {
+  // The 6 placeholder drafts (README §9: replaced before they ever ship).
+  // Pinned as a set — NOT as a total count — so the weekly ingest of a new
+  // real post passes without edits, while a draft flag flipping (or a draft
+  // slug disappearing without replacement copy) still fails loudly.
+  const DRAFT_SLUGS = [
+    'spotlight-ruby-hill',
+    'what-staging-returns',
+    'rate-buydowns-explained',
+    'saturday-downtown-livermore',
+    'spring-inventory-early-signals',
+    'winter-listings-read-twice',
+  ]
+
+  it('the known draft set is present and flagged draft', async () => {
     const { allPosts } = await load()
-    expect(allPosts).toHaveLength(9)
+    const drafts = allPosts.filter(p => p.draft).map(p => p.slug)
+    expect(drafts.sort()).toEqual([...DRAFT_SLUGS].sort())
   })
 
   it('allPosts is sorted descending by date', async () => {
@@ -47,20 +61,23 @@ describe('posts index', () => {
     }
   })
 
-  it('production mode returns exactly the 3 real posts', async () => {
+  it('production mode returns every real post and no draft', async () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('SHOW_DRAFTS', '')
-    const { getPublishedPosts } = await load()
+    const { allPosts, getPublishedPosts } = await load()
     const published = getPublishedPosts()
-    expect(published).toHaveLength(3)
     const slugs = published.map(p => p.slug)
+    // no draft ever ships, by flag and by pinned slug
+    expect(published.every(p => !p.draft)).toBe(true)
+    for (const draft of DRAFT_SLUGS) expect(slugs).not.toContain(draft)
+    // published + drafts partition the full set
+    expect(published).toHaveLength(allPosts.length - DRAFT_SLUGS.length)
+    // known real posts are present, newest first (sorting covered above)
+    expect(slugs).toContain('down-payment-surprise')
     expect(slugs).toContain('national-headlines-tri-valley-summer')
     expect(slugs).toContain('proximity-premium-san-jose')
     expect(slugs).toContain('two-markets-twenty-minutes')
-    // newest first
-    expect(slugs[0]).toBe('national-headlines-tri-valley-summer')
-    expect(slugs[1]).toBe('proximity-premium-san-jose')
-    expect(slugs[2]).toBe('two-markets-twenty-minutes')
+    expect(slugs[0]).toBe('down-payment-surprise')
   })
 
   it('SHOW_DRAFTS=true (non-production) returns all posts', async () => {

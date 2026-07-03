@@ -1,5 +1,7 @@
 import { KtInline } from '@/lib/inline'
 import type { PostBlock } from '@/content/posts/types'
+import { PostChart } from './post-chart'
+import { PostFigure } from './post-figure'
 
 export function PostBody({ body }: { body: PostBlock[] }) {
   return (
@@ -43,6 +45,12 @@ export function PostBody({ body }: { body: PostBlock[] }) {
               {b.disclaimer}
             </p>
           )
+        }
+        if ('chart' in b) {
+          return <PostChart key={idx} chart={b.chart} />
+        }
+        if ('image' in b) {
+          return <PostFigure key={idx} image={b.image} />
         }
         if ('sources' in b) {
           return (
