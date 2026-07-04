@@ -49,6 +49,11 @@ const nextConfig: NextConfig = {
       { source: '/blog/:slug', destination: '/newsletter/:slug', permanent: true },
       { source: '/home-guide', destination: '/newsletter', permanent: true },
       { source: '/home-guide/:slug', destination: '/newsletter/:slug', permanent: true },
+      // The domain's previous RealGeeks IDX site is still indexed by Google
+      // (/listings/city/<City>, /listings/subdivision/<Name>, /home-values/…).
+      // Land those stale visitors somewhere useful instead of the 404 page.
+      { source: '/listings/:path*', destination: '/', permanent: true },
+      { source: '/home-values/:path*', destination: '/contact', permanent: true },
     ]
   },
 }
