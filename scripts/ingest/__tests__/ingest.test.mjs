@@ -127,6 +127,50 @@ describe('parsePostMd — chart blocks', () => {
     expect(post.body[0]).toMatchObject({ chart: { kind: 'bar', title: 'Gap' } })
   })
 
+  test('a donut chart fence becomes a chart block', () => {
+    const md =
+      fm() +
+      chartFence(
+        JSON.stringify({
+          kind: 'donut',
+          title: 'Share',
+          source: 'NAR',
+          unit: '%',
+          slices: [
+            { label: 'With student debt', value: 33 },
+            { label: 'Without student debt', value: 67 },
+          ],
+        }),
+      )
+    const { post } = parse(md)
+    expect(post.body[0]).toMatchObject({ chart: { kind: 'donut', title: 'Share' } })
+    expect(post.body[0].chart.slices).toHaveLength(2)
+  })
+
+  test('rejects a donut missing its slices', () => {
+    expect(() => parse(fm() + chartFence('{"kind":"donut","title":"T"}'))).toThrow(/slices/)
+  })
+
+  test('rejects a donut with more than five slices', () => {
+    const slices = Array.from({ length: 6 }, (_, i) => ({ label: `S${i}`, value: 10 }))
+    expect(() => parse(fm() + chartFence(JSON.stringify({ kind: 'donut', title: 'T', slices })))).toThrow(/five/i)
+  })
+
+  test('rejects a donut slice with a negative or non-numeric value', () => {
+    expect(() =>
+      parse(fm() + chartFence(JSON.stringify({ kind: 'donut', title: 'T', slices: [{ label: 'A', value: '33' }] }))),
+    ).toThrow(/slice/i)
+    expect(() =>
+      parse(fm() + chartFence(JSON.stringify({ kind: 'donut', title: 'T', slices: [{ label: 'A', value: -5 }, { label: 'B', value: 10 }] }))),
+    ).toThrow(/negative/i)
+  })
+
+  test('rejects a donut whose slices sum to zero', () => {
+    expect(() =>
+      parse(fm() + chartFence(JSON.stringify({ kind: 'donut', title: 'T', slices: [{ label: 'A', value: 0 }, { label: 'B', value: 0 }] }))),
+    ).toThrow(/zero/i)
+  })
+
   test('rejects invalid chart JSON with the line number', () => {
     expect(() => parse(fm() + '\n```chart\n{ kind: line }\n```\n')).toThrow(/chart.*line 9/is)
   })

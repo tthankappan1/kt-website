@@ -42,9 +42,24 @@ function validateMeta(meta, categories) {
 
 function validateChart(spec, lineNo) {
   const at = `chart block at line ${lineNo}`
-  if (spec.kind !== 'line' && spec.kind !== 'bar') throw new IngestError(`${at}: kind must be "line" or "bar"`)
+  if (spec.kind !== 'line' && spec.kind !== 'bar' && spec.kind !== 'donut')
+    throw new IngestError(`${at}: kind must be "line", "bar", or "donut"`)
   if (typeof spec.title !== 'string' || !spec.title) throw new IngestError(`${at}: title is required`)
-  if (spec.kind === 'line') {
+  if (spec.kind === 'donut') {
+    // Part-to-whole only. Slice order is meaning: the first slice is the story
+    // (a two-slice donut renders as a ratio with the first slice's share as the
+    // center figure); colors are assigned in that fixed order, never cycled.
+    if (!Array.isArray(spec.slices) || spec.slices.length < 2)
+      throw new IngestError(`${at}: slices must be an array of at least 2 { "label", "value" } entries`)
+    if (spec.slices.length > 5)
+      throw new IngestError(`${at}: a donut caps at five slices — fold the tail into an "Other" slice or use a bar chart`)
+    for (const s of spec.slices) {
+      if (typeof s.label !== 'string' || !s.label || typeof s.value !== 'number')
+        throw new IngestError(`${at}: every slice must be { "label": string, "value": number }`)
+      if (s.value < 0) throw new IngestError(`${at}: slice "${s.label}" is negative — a donut is part-to-whole, all slices >= 0`)
+    }
+    if (!spec.slices.some(s => s.value > 0)) throw new IngestError(`${at}: slices sum to zero — nothing to plot`)
+  } else if (spec.kind === 'line') {
     if (!Array.isArray(spec.series) || spec.series.length === 0) throw new IngestError(`${at}: series must be a non-empty array`)
     for (const s of spec.series) {
       if (typeof s.label !== 'string' || !s.label) throw new IngestError(`${at}: every series needs a label`)
