@@ -63,7 +63,7 @@ excerpt: One or two sentences used on the archive page and in previews.
 
 ### Charts — data only, never drawings
 
-A chart is a fenced block whose body is JSON. Two kinds exist. **Never emit
+A chart is a fenced block whose body is JSON. Three kinds exist. **Never emit
 SVG, HTML, or a description-table for a standard chart — just the numbers.**
 
 Trend over time (`line`). One entry per series; a series carries its own
@@ -114,9 +114,31 @@ Category comparison (`bar`):
 ```
 ````
 
-Field notes: `title` and one of `series`/`bars` are required; `source` and
-`note` (the one-line italic takeaway under the plot) are optional but almost
-always wanted. Keep numbers real — the site plots exactly what's here.
+Part-to-whole (`donut`). 2–5 slices, all values ≥ 0. **Slice order is
+meaning**: the first slice is the story — a two-slice donut renders as a
+ratio (gold-deep share on a quiet track, with the first slice's share as the
+center figure); three or more slices render in the site's fixed categorical
+order. More than five categories is a `bar`, not a donut:
+
+````markdown
+```chart
+{
+  "kind": "donut",
+  "title": "One in Three First-Time Buyers Bought With Student Debt",
+  "source": "National Association of Realtors",
+  "note": "A third didn't wait for a zero balance.",
+  "unit": "%",
+  "slices": [
+    { "label": "Carrying student debt", "value": 33 },
+    { "label": "No student debt", "value": 67 }
+  ]
+}
+```
+````
+
+Field notes: `title` and one of `series`/`bars`/`slices` are required;
+`source` and `note` (the one-line italic takeaway under the plot) are optional
+but almost always wanted. Keep numbers real — the site plots exactly what's here.
 
 ### Images and bespoke visuals
 
@@ -127,7 +149,7 @@ Alt text is required.
 - A referenced file that isn't in the folder is a **warning, not an error**:
   the post publishes and the image appears when the file is later dropped into
   `public/images/posts/<slug>/` (same fill-later model as the site's photo slots).
-- **Bespoke one-off visuals** (a diagram that isn't a line/bar chart): ship a
+- **Bespoke one-off visuals** (a diagram that isn't a line/bar/donut chart): ship a
   finished SVG asset. It renders on the light ivory surface (`#F3F0EB`), so
   use light-surface brand colors — charcoal `#262623`, gold-deep `#7E6A4F` —
   **never bright gold `#C0A278` on light**. Fraunces for display text, Inter

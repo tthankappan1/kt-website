@@ -6,6 +6,7 @@ export type ChartSeries = { label: string; unit?: string; points: { x: string; y
 export type ChartSpec =
   | { kind: 'line'; title: string; source?: string; note?: string; series: ChartSeries[] }
   | { kind: 'bar'; title: string; source?: string; note?: string; unit?: string; bars: { label: string; value: number }[] }
+  | { kind: 'donut'; title: string; source?: string; note?: string; unit?: string; slices: { label: string; value: number }[] }
 // image.src is a public URL path (ingest emits /images/posts/<slug>/<file>); a missing file renders nothing (never blocks publish).
 export type PostImage = { src: string; alt: string; caption?: string }
 export type PostBlock =
