@@ -87,7 +87,7 @@ _Shipped in PR #5, merged 2026-07-08; live at `/newsletter/lender-number-isnt-yo
 
 **The issue itself:** July Week 2 (*The Number Your Lender Actually Looks At Isn't Your Loan Balance*, Market Update) ships a NAR delay-stats bar, the one-in-three donut (both verified against nar.realtor), a Sources footer, and a 21:9 FLUX-schnell cover in the locked brand photo style at `public/images/blog-<slug>.jpg` (`cover: true` frontmatter → 21:9 `PhotoSlot`).
 
-**Cross-repo follow-up (owner):** the mirrored contract update in the **kt-content** repo is committed locally on `feat/contract-donut-chart-kind` (cb4538a) but not pushed — push it, open the PR, then version-bump + tag per that repo's `RELEASING.md`.
+**Cross-repo follow-up (owner):** the mirrored contract update is up as **kt-content PR #12** (`feat/contract-donut-chart-kind`) — review/merge, then version-bump + tag per that repo's `RELEASING.md` so weekly generation learns the donut kind.
 
 ## Maintenance notes
 - Publish a post = add `src/content/posts/<slug>.ts` + one import line in `index.ts`, then push.
