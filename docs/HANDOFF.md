@@ -79,6 +79,16 @@ _Shipped in PR #2, merged 2026-07-02; owner-verified on a real phone. Analytics 
 4. `mobile-menu.tsx` has two separate mount effects (scroll lock, focus) — could merge; purely stylistic.
 5. Blog share-row buttons remain 40px (spec-accepted; below the 44px ideal).
 
+## Donut chart kind + July Week 2 issue (July 2026)
+
+_Shipped in PR #5, merged 2026-07-08; live at `/newsletter/lender-number-isnt-your-loan-balance` (verified 200 in production)._
+
+**What shipped:** the chart system's third kind — `kind: "donut"` (part-to-whole, 2–5 slices) across the contract (`docs/content-contract.md`), ingest validation, and `PostChart`. Two slices render as a **ratio**: first slice = the story in gold-deep on a lighter same-ramp track, share as the center figure; 3+ slices use a fixed categorical order (`#7E6A4F, #262623, #A9987B, #57503F, #C7BCA4` — dataviz-validated, worst all-pairs CVD ΔE 12.9 on ivory; the sub-3:1 light steps carry mandatory relief: value-bearing legend, 2px surface gaps, hidden table twin). Slice order is meaning — colors are never cycled. Test count now **505** (13 new donut tests; the posts-index test pins the newest slug, so each weekly ingest updates that one line).
+
+**The issue itself:** July Week 2 (*The Number Your Lender Actually Looks At Isn't Your Loan Balance*, Market Update) ships a NAR delay-stats bar, the one-in-three donut (both verified against nar.realtor), a Sources footer, and a 21:9 FLUX-schnell cover in the locked brand photo style at `public/images/blog-<slug>.jpg` (`cover: true` frontmatter → 21:9 `PhotoSlot`).
+
+**Cross-repo follow-up (owner):** the mirrored contract update in the **kt-content** repo is committed locally on `feat/contract-donut-chart-kind` (cb4538a) but not pushed — push it, open the PR, then version-bump + tag per that repo's `RELEASING.md`.
+
 ## Maintenance notes
 - Publish a post = add `src/content/posts/<slug>.ts` + one import line in `index.ts`, then push.
 - Brand rules + locked decisions live in `CLAUDE.md`. The `.kt-*` CSS in `globals.css` is a verbatim port of the design system — extend with net-new rules, don't restyle.
