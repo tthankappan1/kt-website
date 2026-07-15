@@ -13,6 +13,7 @@ import { post as springInventoryEarlySignals } from './spring-inventory-early-si
 import { post as winterListingsReadTwice } from './winter-listings-read-twice'
 import { post as downPaymentSurprise } from './down-payment-surprise'
 import { post as lenderNumberIsntYourLoanBalance } from './lender-number-isnt-your-loan-balance'
+import { post as loveYourNeighborhoodOutgrowingYourHome } from './love-your-neighborhood-outgrowing-your-home'
 
 export const allPosts: Post[] = [
   nationalHeadlinesTriValleySummer,
@@ -26,6 +27,7 @@ export const allPosts: Post[] = [
   winterListingsReadTwice,
   downPaymentSurprise,
   lenderNumberIsntYourLoanBalance,
+  loveYourNeighborhoodOutgrowingYourHome,
 ].sort((a, b) => b.date.localeCompare(a.date))
 
 // README §8: drafts NEVER appear in production builds.

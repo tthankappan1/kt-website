@@ -77,7 +77,8 @@ describe('posts index', () => {
     expect(slugs).toContain('national-headlines-tri-valley-summer')
     expect(slugs).toContain('proximity-premium-san-jose')
     expect(slugs).toContain('two-markets-twenty-minutes')
-    expect(slugs[0]).toBe('lender-number-isnt-your-loan-balance')
+    expect(slugs).toContain('lender-number-isnt-your-loan-balance')
+    expect(slugs[0]).toBe('love-your-neighborhood-outgrowing-your-home')
   })
 
   it('SHOW_DRAFTS=true (non-production) returns all posts', async () => {
