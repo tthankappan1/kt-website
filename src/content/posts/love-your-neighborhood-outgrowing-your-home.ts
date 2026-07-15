@@ -2,7 +2,7 @@ import type { Post } from './types'
 
 export const post: Post = {
   slug: 'love-your-neighborhood-outgrowing-your-home',
-  title: `Love Your Neighborhood—but Outgrowing Your Home?`,
+  title: `Outgrowing Your Home? Remodel, Add On, or Move?`,
   category: 'Selling',
   date: '2026-07-15',
   excerpt: `Remodel, add an ADU, or sell and move up? For East Bay homeowners with a 3% mortgage and a Prop 13 tax base, the answer comes down to math most people never run.`,
