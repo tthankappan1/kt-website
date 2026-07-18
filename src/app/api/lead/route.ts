@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase-admin'
+import { ingestContact } from '@/lib/kt-crm'
 import { LeadSchema } from '@/lib/validation'
 import { guardWrite, readLimitedJson, WRITE_RATE_LIMIT } from '@/lib/api-guard'
 
 export const runtime = 'nodejs'
-export const maxDuration = 10 // bound a hung Supabase call (one tiny insert; normally <1s)
+export const maxDuration = 25 // two bounded CRM attempts (10s each) + overhead
 
 export async function POST(request: Request): Promise<NextResponse> {
   // Content-type + per-IP rate limit before any work.
@@ -47,35 +47,34 @@ export async function POST(request: Request): Promise<NextResponse> {
     sourcePage,
   } = parsed.data
 
-  // Build final message: append lastName/phone in a delimited block when present
-  // (these fields have no §7 columns — CLAUDE.md documented decision)
-  let finalMessage = message
-  const extras: string[] = []
-  if (lastName) extras.push(`Last name: ${lastName}`)
-  if (phone) extras.push(`Phone: ${phone}`)
-  if (extras.length > 0) {
-    finalMessage = (finalMessage ? finalMessage + '\n\n' : '') + '—\n' + extras.join('\n')
-  }
+  // Consent invariant (issue #6): an inquiry is NOT marketing consent. Request
+  // the market-updates list ONLY when a county checkbox was explicitly ticked.
+  const counties = [
+    ...(newsletterAlameda ? ['alameda'] : []),
+    ...(newsletterContracosta ? ['contra-costa'] : []),
+  ]
+  const lists = counties.length > 0 ? ['market-updates'] : []
 
-  // Insert into leads via the secret-key admin client (service_role, bypasses RLS)
-  const supabase = getSupabaseAdmin()
-  const { error } = await supabase.from('leads').insert({
-    intent,
-    timeframe: timeframe || null,
+  const customFields: Record<string, string> = { intent }
+  if (timeframe) customFields.timeframe = timeframe
+  if (message) customFields.message = message
+  if (sourcePage) customFields.source_page = sourcePage
+  if (counties.length > 0) customFields.market_update_counties = counties.join(', ')
+
+  const result = await ingestContact({
+    email: email.toLowerCase(),
     first_name: firstName,
-    email,
-    message: finalMessage || null,
-    newsletter_alameda: newsletterAlameda,
-    newsletter_contracosta: newsletterContracosta,
-    source_page: sourcePage || null,
+    ...(lastName ? { last_name: lastName } : {}),
+    ...(phone ? { phone } : {}),
+    contact_type: 'lead',
+    source_detail: 'contact-page',
+    lists,
+    ...(lists.length > 0 ? { consent: { basis: 'web_form' } } : {}),
+    custom_fields: customFields,
   })
 
-  if (error) {
-    // Log only code + message (never the full error / submitted row, which can
-    // echo lead PII into platform logs); never leak details to the client.
-    console.error('[lead] insert error:', error.code, error.message)
+  if (!result.ok) {
     return NextResponse.json({ error: 'server' }, { status: 500 })
   }
-
   return NextResponse.json({ ok: true }, { status: 200 })
 }
