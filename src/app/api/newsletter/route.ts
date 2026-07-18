@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase-admin'
+import { ingestContact } from '@/lib/kt-crm'
 import { NewsletterSchema } from '@/lib/validation'
 import { guardWrite, readLimitedJson, WRITE_RATE_LIMIT } from '@/lib/api-guard'
 
 export const runtime = 'nodejs'
-export const maxDuration = 10 // bound a hung Supabase call (one tiny insert; normally <1s)
+export const maxDuration = 25 // two bounded CRM attempts (10s each) + overhead
 
 export async function POST(request: Request): Promise<NextResponse> {
   // Content-type + per-IP rate limit before any work.
@@ -35,22 +35,19 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   const { email, sourcePage } = parsed.data
 
-  // Insert into newsletter_signups via the secret-key admin client (service_role, bypasses RLS)
-  const supabase = getSupabaseAdmin()
-  const { error } = await supabase.from('newsletter_signups').insert({
+  // Homepage signup IS an explicit newsletter request (issue #6 consent rule):
+  // request the newsletter list with web_form consent. The CRM upserts repeat
+  // signups (action: "updated") — both actions are success for the visitor.
+  const result = await ingestContact({
     email: email.toLowerCase(),
-    source_page: sourcePage || null,
+    lists: ['newsletter'],
+    consent: { basis: 'web_form' },
+    source_detail: 'homepage-signup',
+    ...(sourcePage ? { custom_fields: { source_page: sourcePage } } : {}),
   })
 
-  if (error) {
-    // Unique violation: idempotent re-signup — treat as success
-    if (error.code === '23505') {
-      return NextResponse.json({ ok: true }, { status: 200 })
-    }
-    // All other DB errors: log only code + message; never leak to client.
-    console.error('[newsletter] insert error:', error.code, error.message)
+  if (!result.ok) {
     return NextResponse.json({ error: 'server' }, { status: 500 })
   }
-
   return NextResponse.json({ ok: true }, { status: 200 })
 }
