@@ -41,6 +41,7 @@ describe('ingestContact', () => {
     expect(init.method).toBe('POST')
     expect(init.headers.Authorization).toBe('Bearer test-ingest-key')
     expect(init.headers['Content-Type']).toBe('application/json')
+    expect(init.signal).toBeInstanceOf(AbortSignal)
     const body = JSON.parse(init.body)
     expect(body.source).toBe('web_signup')
     expect(body.email).toBe('a@b.com')

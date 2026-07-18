@@ -77,7 +77,7 @@ describe('POST /api/newsletter', () => {
     expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('silently drops honeypot submissions (returns 200, does NOT insert)', async () => {
+  it('silently drops honeypot submissions (returns 200, no CRM call)', async () => {
     const req = makeRequest({ email: 'bot@example.com', website: 'http://spam.com' })
     const res = await POST(req)
     const body = await res.json()
@@ -110,7 +110,7 @@ describe('POST /api/newsletter', () => {
     expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('returns 415 when content-type is not JSON, no insert', async () => {
+  it('returns 415 when content-type is not JSON, no CRM call', async () => {
     const req = makeRequest({ email: 'a@b.com' }, false, { 'Content-Type': 'text/plain' })
     const res = await POST(req)
     expect(res.status).toBe(415)

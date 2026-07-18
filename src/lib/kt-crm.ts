@@ -33,10 +33,11 @@ export async function ingestContact(payload: CrmIngestPayload): Promise<CrmInges
   const url = process.env.KT_CRM_INGEST_URL || DEFAULT_INGEST_URL
 
   // One retry with the SAME idempotency_key is safe per the CRM contract.
+  // Pinned fields go last so a payload key can never override them.
   const body = JSON.stringify({
+    ...payload,
     source: 'web_signup',
     idempotency_key: crypto.randomUUID(),
-    ...payload,
   })
 
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -48,6 +49,9 @@ export async function ingestContact(payload: CrmIngestPayload): Promise<CrmInges
         body,
         signal: AbortSignal.timeout(ATTEMPT_TIMEOUT_MS),
         cache: 'no-store',
+        // A cross-origin redirect would strip the Authorization header and
+        // could convert POST to GET — fail loudly instead of silently.
+        redirect: 'error',
       })
       if (res.ok) {
         const data = (await res.json().catch(() => null)) as { action?: string } | null
@@ -59,8 +63,12 @@ export async function ingestContact(payload: CrmIngestPayload): Promise<CrmInges
         return { ok: false, status: res.status }
       }
       console.error('[kt-crm] ingest 5xx:', res.status, last ? '(giving up)' : '(retrying)')
-    } catch {
-      console.error('[kt-crm] ingest attempt failed (timeout/network)', last ? '(giving up)' : '(retrying)')
+    } catch (err) {
+      console.error(
+        '[kt-crm] ingest attempt failed:',
+        err instanceof Error ? err.name : 'unknown',
+        last ? '(giving up)' : '(retrying)',
+      )
     }
   }
   return { ok: false, status: null }

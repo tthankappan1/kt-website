@@ -71,6 +71,22 @@ describe('POST /api/lead', () => {
     })
   })
 
+  it('requests market-updates with a single county checkbox (no stray separator)', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
+    await POST(
+      makeRequest({
+        intent: 'buying',
+        firstName: 'Ben',
+        email: 'ben@example.com',
+        newsletterAlameda: true,
+      }),
+    )
+    const payload = ingestMock.mock.calls[0][0]
+    expect(payload.lists).toEqual(['market-updates'])
+    expect(payload.consent).toEqual({ basis: 'web_form' })
+    expect(payload.custom_fields.market_update_counties).toBe('alameda')
+  })
+
   it('requests NO lists and claims NO consent without an explicit opt-in', async () => {
     ingestMock.mockResolvedValue({ ok: true, action: 'created' })
     await POST(makeRequest({ intent: 'curious', firstName: 'Ben', email: 'ben@example.com' }))
