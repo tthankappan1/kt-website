@@ -1,15 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { resetRateLimitForTests } from '@/lib/rate-limit'
 
-// insertMock is the function we spy on per test
-const insertMock = vi.fn()
+const ingestMock = vi.fn()
 
-vi.mock('@/lib/supabase-admin', () => ({
-  getSupabaseAdmin: () => ({
-    from: vi.fn(() => ({
-      insert: insertMock,
-    })),
-  }),
+vi.mock('@/lib/kt-crm', () => ({
+  ingestContact: (payload: unknown) => ingestMock(payload),
 }))
 
 // Import after the mock is set up
@@ -25,7 +20,7 @@ function makeRequest(body: unknown, malformed = false, headers?: Record<string, 
 
 describe('POST /api/newsletter', () => {
   beforeEach(() => {
-    insertMock.mockReset()
+    ingestMock.mockReset()
     resetRateLimitForTests()
   })
 
@@ -33,28 +28,32 @@ describe('POST /api/newsletter', () => {
     vi.clearAllMocks()
   })
 
-  it('returns 200 and calls insert with lowercased email on valid input', async () => {
-    insertMock.mockResolvedValue({ error: null })
+  it('returns 200 and ingests lowercased email with newsletter list consent', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
     const req = makeRequest({ email: 'Reader@Example.COM', sourcePage: '/newsletter' })
     const res = await POST(req)
     const body = await res.json()
     expect(res.status).toBe(200)
     expect(body).toEqual({ ok: true })
-    expect(insertMock).toHaveBeenCalledOnce()
-    expect(insertMock).toHaveBeenCalledWith({
+    expect(ingestMock).toHaveBeenCalledOnce()
+    expect(ingestMock).toHaveBeenCalledWith({
       email: 'reader@example.com',
-      source_page: '/newsletter',
+      lists: ['newsletter'],
+      consent: { basis: 'web_form' },
+      source_detail: 'homepage-signup',
+      custom_fields: { source_page: '/newsletter' },
     })
   })
 
-  it('uses null for source_page when sourcePage is not provided', async () => {
-    insertMock.mockResolvedValue({ error: null })
-    const req = makeRequest({ email: 'user@test.com' })
-    const res = await POST(req)
+  it('omits custom_fields when sourcePage is not provided', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
+    const res = await POST(makeRequest({ email: 'user@test.com' }))
     expect(res.status).toBe(200)
-    expect(insertMock).toHaveBeenCalledWith({
+    expect(ingestMock).toHaveBeenCalledWith({
       email: 'user@test.com',
-      source_page: null,
+      lists: ['newsletter'],
+      consent: { basis: 'web_form' },
+      source_detail: 'homepage-signup',
     })
   })
 
@@ -66,7 +65,7 @@ describe('POST /api/newsletter', () => {
     expect(body.error).toBe('validation')
     // schema shape must NOT be leaked to the client
     expect(body.issues).toBeUndefined()
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
   it('returns 400 with validation error when email is missing', async () => {
@@ -75,36 +74,31 @@ describe('POST /api/newsletter', () => {
     const body = await res.json()
     expect(res.status).toBe(400)
     expect(body.error).toBe('validation')
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('silently drops honeypot submissions (returns 200, does NOT insert)', async () => {
+  it('silently drops honeypot submissions (returns 200, no CRM call)', async () => {
     const req = makeRequest({ email: 'bot@example.com', website: 'http://spam.com' })
     const res = await POST(req)
     const body = await res.json()
     expect(res.status).toBe(200)
     expect(body).toEqual({ ok: true })
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('returns 200 on duplicate signup (Postgres unique violation 23505)', async () => {
-    insertMock.mockResolvedValue({ error: { code: '23505' } })
-    const req = makeRequest({ email: 'existing@example.com' })
-    const res = await POST(req)
-    const body = await res.json()
+  it('returns 200 on repeat signup (CRM upserts as updated)', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'updated' })
+    const res = await POST(makeRequest({ email: 'existing@example.com' }))
+    expect((await res.json())).toEqual({ ok: true })
     expect(res.status).toBe(200)
-    expect(body).toEqual({ ok: true })
   })
 
-  it('returns 500 on other database error', async () => {
-    insertMock.mockResolvedValue({ error: { code: 'XX000', message: 'Internal error' } })
-    const req = makeRequest({ email: 'user@example.com' })
-    const res = await POST(req)
+  it('returns 500 without leaking details when the CRM call fails', async () => {
+    ingestMock.mockResolvedValue({ ok: false, status: 503 })
+    const res = await POST(makeRequest({ email: 'user@example.com' }))
     const body = await res.json()
     expect(res.status).toBe(500)
     expect(body).toEqual({ error: 'server' })
-    // Should not leak error details
-    expect(JSON.stringify(body)).not.toContain('Internal error')
   })
 
   it('returns 400 for malformed JSON body', async () => {
@@ -113,18 +107,18 @@ describe('POST /api/newsletter', () => {
     const body = await res.json()
     expect(res.status).toBe(400)
     expect(body).toEqual({ error: 'invalid_json' })
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('returns 415 when content-type is not JSON, no insert', async () => {
+  it('returns 415 when content-type is not JSON, no CRM call', async () => {
     const req = makeRequest({ email: 'a@b.com' }, false, { 'Content-Type': 'text/plain' })
     const res = await POST(req)
     expect(res.status).toBe(415)
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
   it('rate-limits a flood from one client (429 after the limit)', async () => {
-    insertMock.mockResolvedValue({ error: null })
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
     const ip = { 'x-forwarded-for': '198.51.100.7' }
     for (let i = 0; i < 5; i++) {
       const res = await POST(makeRequest({ email: `u${i}@example.com` }, false, ip))

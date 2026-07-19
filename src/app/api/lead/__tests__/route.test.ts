@@ -1,15 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { resetRateLimitForTests } from '@/lib/rate-limit'
 
-// insertMock is the function we spy on per test
-const insertMock = vi.fn()
+const ingestMock = vi.fn()
 
-vi.mock('@/lib/supabase-admin', () => ({
-  getSupabaseAdmin: () => ({
-    from: vi.fn(() => ({
-      insert: insertMock,
-    })),
-  }),
+vi.mock('@/lib/kt-crm', () => ({
+  ingestContact: (payload: unknown) => ingestMock(payload),
 }))
 
 // Import after the mock is set up
@@ -31,7 +26,7 @@ const minimalValid = {
 
 describe('POST /api/lead', () => {
   beforeEach(() => {
-    insertMock.mockReset()
+    ingestMock.mockReset()
     resetRateLimitForTests()
   })
 
@@ -39,28 +34,88 @@ describe('POST /api/lead', () => {
     vi.clearAllMocks()
   })
 
-  it('returns 200 and calls insert once with correct §7 column names on valid minimal lead', async () => {
-    insertMock.mockResolvedValue({ error: null })
-    const req = makeRequest(minimalValid)
-    const res = await POST(req)
-    const body = await res.json()
+  it('maps a full submission to the CRM payload with market-updates opt-in', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
+    const res = await POST(
+      makeRequest({
+        intent: 'selling',
+        timeframe: 'Ready now',
+        firstName: 'Asha',
+        lastName: 'Rao',
+        email: 'Asha@Example.com',
+        phone: '925-555-0100',
+        message: 'Thinking about listing in the fall.',
+        newsletterAlameda: true,
+        newsletterContracosta: true,
+        sourcePage: '/contact',
+      }),
+    )
     expect(res.status).toBe(200)
-    expect(body).toEqual({ ok: true })
-    expect(insertMock).toHaveBeenCalledOnce()
-    const inserted = insertMock.mock.calls[0][0] as Record<string, unknown>
-    expect(inserted.first_name).toBe('Jane')
-    expect(inserted.intent).toBe('buying')
-    expect(inserted.email).toBe('jane@example.com')
-    expect(inserted.timeframe).toBeNull()
-    expect(inserted.newsletter_alameda).toBe(false)
-    expect(inserted.newsletter_contracosta).toBe(false)
-    expect(inserted.source_page).toBeNull()
-    // no unknown columns
-    expect('last_name' in inserted).toBe(false)
-    expect('phone' in inserted).toBe(false)
+    expect(ingestMock).toHaveBeenCalledOnce()
+    expect(ingestMock).toHaveBeenCalledWith({
+      email: 'asha@example.com',
+      first_name: 'Asha',
+      last_name: 'Rao',
+      phone: '925-555-0100',
+      contact_type: 'lead',
+      source_detail: 'contact-page',
+      lists: ['market-updates'],
+      consent: { basis: 'web_form' },
+      custom_fields: {
+        intent: 'selling',
+        timeframe: 'Ready now',
+        message: 'Thinking about listing in the fall.',
+        source_page: '/contact',
+        market_update_counties: 'alameda, contra-costa',
+      },
+    })
   })
 
-  it('returns 400 validation error when intent is outside enum, no insert', async () => {
+  it('requests market-updates with a single county checkbox (no stray separator)', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
+    await POST(
+      makeRequest({
+        intent: 'buying',
+        firstName: 'Ben',
+        email: 'ben@example.com',
+        newsletterAlameda: true,
+      }),
+    )
+    const payload = ingestMock.mock.calls[0][0]
+    expect(payload.lists).toEqual(['market-updates'])
+    expect(payload.consent).toEqual({ basis: 'web_form' })
+    expect(payload.custom_fields.market_update_counties).toBe('alameda')
+  })
+
+  it('requests NO lists and claims NO consent without an explicit opt-in', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
+    await POST(makeRequest({ intent: 'curious', firstName: 'Ben', email: 'ben@example.com' }))
+    const payload = ingestMock.mock.calls[0][0]
+    expect(payload.lists).toEqual([])
+    expect(payload.consent).toBeUndefined()
+  })
+
+  it('omits optional CRM fields that were not submitted', async () => {
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
+    await POST(makeRequest({ intent: 'buying', firstName: 'Ben', email: 'ben@example.com' }))
+    expect(ingestMock).toHaveBeenCalledWith({
+      email: 'ben@example.com',
+      first_name: 'Ben',
+      contact_type: 'lead',
+      source_detail: 'contact-page',
+      lists: [],
+      custom_fields: { intent: 'buying' },
+    })
+  })
+
+  it('returns 500 without leaking details when the CRM call fails', async () => {
+    ingestMock.mockResolvedValue({ ok: false, status: null })
+    const res = await POST(makeRequest({ intent: 'curious', firstName: 'A', email: 'a@b.com' }))
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({ error: 'server' })
+  })
+
+  it('returns 400 validation error when intent is outside enum, no CRM call', async () => {
     const req = makeRequest({ ...minimalValid, intent: 'renting' })
     const res = await POST(req)
     const body = await res.json()
@@ -68,7 +123,7 @@ describe('POST /api/lead', () => {
     expect(body.error).toBe('validation')
     // schema shape must NOT be leaked to the client
     expect(body.issues).toBeUndefined()
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
   it('returns 400 validation error when firstName is missing', async () => {
@@ -79,7 +134,7 @@ describe('POST /api/lead', () => {
     const body = await res.json()
     expect(res.status).toBe(400)
     expect(body.error).toBe('validation')
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
   it('returns 400 validation error when email is invalid', async () => {
@@ -88,57 +143,16 @@ describe('POST /api/lead', () => {
     const body = await res.json()
     expect(res.status).toBe(400)
     expect(body.error).toBe('validation')
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('silently drops honeypot (website non-empty) — returns 200, NO insert', async () => {
+  it('silently drops honeypot (website non-empty) — returns 200, NO CRM call', async () => {
     const req = makeRequest({ ...minimalValid, website: 'x' })
     const res = await POST(req)
     const body = await res.json()
     expect(res.status).toBe(200)
     expect(body).toEqual({ ok: true })
-    expect(insertMock).not.toHaveBeenCalled()
-  })
-
-  it('appends lastName and phone to message when both are present', async () => {
-    insertMock.mockResolvedValue({ error: null })
-    const req = makeRequest({
-      ...minimalValid,
-      message: 'Hello there',
-      lastName: 'Smith',
-      phone: '(408) 555-1212',
-    })
-    const res = await POST(req)
-    expect(res.status).toBe(200)
-    const inserted = insertMock.mock.calls[0][0] as Record<string, unknown>
-    expect(typeof inserted.message).toBe('string')
-    expect(inserted.message as string).toContain('Hello there')
-    expect(inserted.message as string).toContain('Last name: Smith')
-    expect(inserted.message as string).toContain('Phone: (408) 555-1212')
-  })
-
-  it('persists newsletterAlameda and newsletterContracosta as true', async () => {
-    insertMock.mockResolvedValue({ error: null })
-    const req = makeRequest({
-      ...minimalValid,
-      newsletterAlameda: true,
-      newsletterContracosta: true,
-    })
-    const res = await POST(req)
-    expect(res.status).toBe(200)
-    const inserted = insertMock.mock.calls[0][0] as Record<string, unknown>
-    expect(inserted.newsletter_alameda).toBe(true)
-    expect(inserted.newsletter_contracosta).toBe(true)
-  })
-
-  it('returns 500 { error: "server" } on database error', async () => {
-    insertMock.mockResolvedValue({ error: { code: 'XX000', message: 'DB down' } })
-    const req = makeRequest(minimalValid)
-    const res = await POST(req)
-    const body = await res.json()
-    expect(res.status).toBe(500)
-    expect(body).toEqual({ error: 'server' })
-    expect(JSON.stringify(body)).not.toContain('DB down')
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
   it('returns 400 { error: "invalid_json" } for malformed JSON', async () => {
@@ -147,25 +161,25 @@ describe('POST /api/lead', () => {
     const body = await res.json()
     expect(res.status).toBe(400)
     expect(body).toEqual({ error: 'invalid_json' })
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('returns 415 when content-type is not JSON, no insert', async () => {
+  it('returns 415 when content-type is not JSON, no CRM call', async () => {
     const req = makeRequest(minimalValid, false, { 'Content-Type': 'text/plain' })
     const res = await POST(req)
     expect(res.status).toBe(415)
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
-  it('returns 413 when the body exceeds the size cap, no insert', async () => {
+  it('returns 413 when the body exceeds the size cap, no CRM call', async () => {
     const req = makeRequest({ ...minimalValid, message: 'x'.repeat(17_000) })
     const res = await POST(req)
     expect(res.status).toBe(413)
-    expect(insertMock).not.toHaveBeenCalled()
+    expect(ingestMock).not.toHaveBeenCalled()
   })
 
   it('rate-limits a flood from one client (429 with Retry-After after the limit)', async () => {
-    insertMock.mockResolvedValue({ error: null })
+    ingestMock.mockResolvedValue({ ok: true, action: 'created' })
     const ip = { 'x-forwarded-for': '203.0.113.9' }
     for (let i = 0; i < 5; i++) {
       const res = await POST(makeRequest(minimalValid, false, ip))
