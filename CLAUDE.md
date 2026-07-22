@@ -46,21 +46,17 @@ prototype). The production site recreates it 1:1. The build spec is
 - **Static-first:** every page SSG; blog at `/newsletter/<slug>` via
   `generateStaticParams`. Only server code: `POST /api/lead`,
   `POST /api/newsletter`.
-- **Supabase schema is locked** (`supabase/migrations/0001_leads_newsletter.sql`
-  = README §7 exactly). RLS on, NO policies; writes only through the route
-  handlers with the secret key (server-only). Zod-validate everything; honeypot
-  field `website` on both forms.
-- **Supabase keys: use the NEW API keys** (decided day-one; legacy JWT keys
-  deprecate end-2026). Env vars: `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-  (`sb_publishable_…`, `anon` role, respects RLS, client-safe, currently unused
-  in code) and `SUPABASE_SECRET_KEY` (`sb_secret_…`, `service_role` role,
-  bypasses RLS, server-only, the only write path). Do NOT use
-  `NEXT_PUBLIC_SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY` (legacy) — this
-  supersedes the legacy names in the design-handoff README/START-HERE.
-  `getSupabaseAdmin()`/`assertSecretKey()` throws at startup if an RLS-respecting
-  key (publishable or anon) is placed in the secret slot.
-  - Known conflict, decided: the contact form's optional lastName/phone have
-    no §7 columns — the route appends them to `message` in a delimited block.
+- **Lead capture → KT CRM** (issue #6, 2026-07): both forms POST to the site's
+  own route handlers (`/api/lead`, `/api/newsletter`), which forward
+  server-side to the KT CRM ingestion API
+  (`POST https://kt-crm.onrender.com/api/v1/contacts/ingest`; bearer
+  `KT_CRM_INGEST_API_KEY`, optional `KT_CRM_INGEST_URL` override — both
+  server-only; the CRM has no CORS, deliberately). Zod-validate everything;
+  honeypot field `website` on both forms. Consent invariant: the homepage
+  signup requests `lists: ["newsletter"]`; the contact form requests
+  `["market-updates"]` ONLY when a county checkbox is ticked — never
+  auto-subscribe. lastName/phone now map to real CRM fields (the old
+  append-to-message workaround is retired).
 - Blog section name locked: **"Newsletter"**, served at `/newsletter` (renamed
   from "Home Guide" 2026-06-26 — "Home Guide" read like a static buyer's guide,
   not the weekly newsletter archive it is; old `/home-guide` + `/home-guide/<slug>`

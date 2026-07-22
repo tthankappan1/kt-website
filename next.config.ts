@@ -9,7 +9,7 @@ import type { NextConfig } from 'next'
 // scripts and Tailwind/Next inject inline styles, and a static site cannot use
 // per-request nonces. This is an accepted, documented trade-off — there are no
 // HTML-injection sinks in the app (no dangerouslySetInnerHTML; the inline
-// renderer builds React elements). connect-src stays 'self' because Supabase
+// renderer builds React elements). connect-src stays 'self' because the KT CRM
 // is only ever called server-side.
 const csp = [
   "default-src 'self'",
