@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { PhotoSlot } from '@/components/ui/photo-slot'
 import { KtInline, ktPlain } from '@/lib/inline'
 import { ktFormatDate } from '@/lib/dates'
+import { splitHero } from '@/lib/post-hero'
 import type { Post } from '@/content/posts/types'
 
 export function BlogFeatured({ posts }: { posts: Post[] }) {
@@ -11,14 +12,26 @@ export function BlogFeatured({ posts }: { posts: Post[] }) {
 
   if (!lead) return null
 
+  // Ingested issues ship their hero as the leading body image block instead of
+  // a `cover` slot — the cards use it the same way.
+  const leadHero = splitHero(lead).hero
+
   return (
     <section style={{ padding: 'calc(88px * var(--dm, 1)) 0 0' }}>
       <div className="kt-container">
-        <div className={'kt-bfeat-lead kt-reveal' + (lead.cover ? '' : ' noimg')}>
+        <div className={'kt-bfeat-lead kt-reveal' + (lead.cover || leadHero ? '' : ' noimg')}>
           {lead.cover ? (
             <PhotoSlot
               id={'blog-' + lead.slug}
               alt={ktPlain(lead.title)}
+              radius={18}
+              style={{ aspectRatio: '16 / 10', width: '100%', height: 'auto', display: 'block' }}
+            />
+          ) : leadHero ? (
+            <PhotoSlot
+              id={'post-hero-' + lead.slug}
+              src={leadHero.src}
+              alt={leadHero.alt}
               radius={18}
               style={{ aspectRatio: '16 / 10', width: '100%', height: 'auto', display: 'block' }}
             />
@@ -49,12 +62,28 @@ export function BlogFeatured({ posts }: { posts: Post[] }) {
             className="kt-bfeat-two kt-reveal"
             style={{ marginTop: 'calc(72px * var(--dm, 1))' }}
           >
-            {two.map((p) => (
+            {two.map((p) => {
+              const pHero = splitHero(p).hero
+              return (
               <div key={p.slug}>
                 {p.cover ? (
                   <PhotoSlot
                     id={'blog-' + p.slug}
                     alt={ktPlain(p.title)}
+                    radius={14}
+                    style={{
+                      aspectRatio: '16 / 9',
+                      width: '100%',
+                      height: 'auto',
+                      display: 'block',
+                      marginBottom: '20px',
+                    }}
+                  />
+                ) : pHero ? (
+                  <PhotoSlot
+                    id={'post-hero-' + p.slug}
+                    src={pHero.src}
+                    alt={pHero.alt}
                     radius={14}
                     style={{
                       aspectRatio: '16 / 9',
@@ -79,7 +108,8 @@ export function BlogFeatured({ posts }: { posts: Post[] }) {
                   {p.excerpt}
                 </p>
               </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
