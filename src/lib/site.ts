@@ -1,6 +1,8 @@
 // Site-wide constants — locked decisions from PROJECT-STATUS.md.
 
-export const SITE_URL = 'https://kalyanithilak.com'
+// www is the canonical host actually served — the apex 308-redirects to it, so
+// canonicals, sitemap locs and OG urls must point here, not at the redirect.
+export const SITE_URL = 'https://www.kalyanithilak.com'
 
 export const CONTACT_EMAIL = 'kthilak@intero.com' // interim; may move to a kalyanithilak.com mailbox
 export const CONTACT_PHONE_DISPLAY = '(408) 597-7371'
