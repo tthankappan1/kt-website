@@ -10,6 +10,7 @@ import { ShareRow } from '@/components/blog/share-row'
 import { getPost, getPublishedPosts } from '@/content/posts'
 import { ktFormatDate } from '@/lib/dates'
 import { KtInline, ktPlain } from '@/lib/inline'
+import { splitHero } from '@/lib/post-hero'
 import { SITE_URL } from '@/lib/site'
 
 export const dynamicParams = false
@@ -59,6 +60,10 @@ export default async function PostPage({
   const newer = published[i - 1]
   const older = published[i + 1]
 
+  // Ingested issues carry their hero as the leading body image block — render
+  // it with the same full-width treatment as `cover: true` posts, not as a figure.
+  const { hero, body } = splitHero(post)
+
   return (
     <div>
       <KTNav base="/" />
@@ -95,13 +100,24 @@ export default async function PostPage({
               style={{ aspectRatio: '21 / 9', width: '100%', height: 'auto', display: 'block' }}
             />
           </div>
+        ) : hero ? (
+          <div className="kt-container" style={{ paddingTop: '56px' }}>
+            <PhotoSlot
+              id={'post-hero-' + slug}
+              src={hero.src}
+              alt={hero.alt}
+              radius={18}
+              style={{ aspectRatio: '21 / 9', width: '100%', height: 'auto', display: 'block' }}
+            />
+            {hero.caption ? <p className="kt-hero-note">{hero.caption}</p> : null}
+          </div>
         ) : null}
 
         <article
           className="kt-container kt-prose kt-reveal"
           style={{ paddingTop: '64px', paddingBottom: '24px' }}
         >
-          <PostBody body={post.body} />
+          <PostBody body={body} />
           <p className="kt-body-small" style={{ marginTop: '48px', letterSpacing: '0.06em' }}>
             &mdash; Kalyani Thilak &middot; REALTOR&reg; &middot; Intero Real Estate Services
           </p>

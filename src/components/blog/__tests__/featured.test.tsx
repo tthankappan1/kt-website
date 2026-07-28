@@ -7,7 +7,11 @@ vi.mock('@/lib/images', () => ({
   slotImageSrc: (id: string) => (id === 'blog-cover-post' ? '/images/blog-cover-post.jpg' : null),
 }))
 
-// Import after mock is set up
+// Mock the fs check inside lib/post-hero: every referenced hero asset "exists".
+// The split logic itself is covered by src/lib/__tests__/post-hero.test.ts.
+vi.mock('node:fs', () => ({ default: { existsSync: () => true } }))
+
+// Import after mocks are set up
 const { BlogFeatured } = await import('../featured')
 
 const COVER_POST: Post = {
@@ -36,6 +40,31 @@ const POST_THREE: Post = {
   date: '2026-03-10',
   excerpt: 'Third excerpt.',
   body: [],
+}
+
+// Ingested issues ship their hero as the leading body image block (no `cover`).
+const HERO_LEAD: Post = {
+  slug: 'hero-lead-post',
+  title: 'Hero Lead Issue',
+  category: 'Market Update',
+  date: '2026-07-27',
+  excerpt: 'Hero lead excerpt.',
+  body: [
+    { image: { src: '/images/posts/hero-lead-post/hero-hero-lead-post.jpg', alt: 'Lead hero alt' } },
+    'First paragraph.',
+  ],
+}
+
+const HERO_TWO_UP: Post = {
+  slug: 'hero-two-up-post',
+  title: 'Hero Two-Up Issue',
+  category: 'Selling',
+  date: '2026-07-15',
+  excerpt: 'Hero two-up excerpt.',
+  body: [
+    { image: { src: '/images/posts/hero-two-up-post/hero-hero-two-up-post.jpg', alt: 'Two-up hero alt' } },
+    'First paragraph.',
+  ],
 }
 
 describe('BlogFeatured', () => {
@@ -99,6 +128,26 @@ describe('BlogFeatured', () => {
       const { container } = render(<BlogFeatured posts={[COVER_POST, POST_NO_COVER, POST_THREE]} />)
       const ruleLight = container.querySelector('hr.kt-rule.rule-light')
       expect(ruleLight).toBeInTheDocument()
+    })
+  })
+
+  describe('ingested posts (leading body image, no cover flag)', () => {
+    it('lead with body hero renders the photo slot, not the noimg rule', () => {
+      const { container } = render(<BlogFeatured posts={[HERO_LEAD, POST_THREE]} />)
+      expect(container.querySelector('[data-slot="post-hero-hero-lead-post"]')).toBeInTheDocument()
+      expect(container.querySelector('.kt-bfeat-lead.noimg')).not.toBeInTheDocument()
+      expect(container.querySelector('.kt-bfeat-lead > hr.kt-rule')).not.toBeInTheDocument()
+    })
+
+    it('lead body hero uses the image alt from the post content', () => {
+      render(<BlogFeatured posts={[HERO_LEAD, POST_THREE]} />)
+      expect(screen.getByAltText('Lead hero alt')).toBeInTheDocument()
+    })
+
+    it('two-up post with body hero renders the photo slot, not the rule', () => {
+      const { container } = render(<BlogFeatured posts={[COVER_POST, HERO_TWO_UP, POST_THREE]} />)
+      expect(container.querySelector('[data-slot="post-hero-hero-two-up-post"]')).toBeInTheDocument()
+      expect(container.querySelector('hr.kt-rule.rule-light')).toBeInTheDocument() // POST_THREE still coverless
     })
   })
 })

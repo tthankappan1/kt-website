@@ -5,6 +5,8 @@ import { slotImageSrc } from '@/lib/images'
 type PhotoSlotProps = {
   /** Slot id from PHOTOS.md — fills from public/images/<id>.jpg */
   id: string
+  /** Explicit source (content-shipped post assets) — bypasses the slot manifest */
+  src?: string
   alt: string
   /** Asymmetric top-left radius in px (brand signature shape) */
   radius?: number
@@ -19,8 +21,8 @@ type PhotoSlotProps = {
 // Production replacement for the prototype's <image-slot> drop-zones.
 // Filled slot → optimized cover-cropped image; empty slot → quiet brand
 // frame, no placeholder text (README §10).
-export function PhotoSlot({ id, alt, radius, className, style, sizes, priority }: PhotoSlotProps) {
-  const src = slotImageSrc(id)
+export function PhotoSlot({ id, src: srcProp, alt, radius, className, style, sizes, priority }: PhotoSlotProps) {
+  const src = srcProp ?? slotImageSrc(id)
   const slotStyle: CSSProperties = {
     ...style,
     ...(radius ? { borderTopLeftRadius: `${radius}px` } : null),

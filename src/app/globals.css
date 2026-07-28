@@ -968,6 +968,12 @@ a.kt-bcard-link:hover .kt-bcard-title { color: var(--gold-deep); }
   text-transform: uppercase; color: var(--gold-deep); margin-right: 8px;
 }
 .kt-fig-img img { display: block; width: 100%; height: auto; }
+/* caption under a full-width post hero (leading image block) — fig-note typography */
+.kt-hero-note {
+  font-family: var(--sans); font-weight: 300; font-style: italic;
+  font-size: 13px; line-height: 1.6; color: rgba(38, 37, 35, 0.65);
+  margin: 14px 0 0;
+}
 
 /* share row — charcoal at rest, hover-to-native (matches nav social decision) */
 .kt-share { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
