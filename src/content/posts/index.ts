@@ -14,6 +14,7 @@ import { post as winterListingsReadTwice } from './winter-listings-read-twice'
 import { post as downPaymentSurprise } from './down-payment-surprise'
 import { post as lenderNumberIsntYourLoanBalance } from './lender-number-isnt-your-loan-balance'
 import { post as loveYourNeighborhoodOutgrowingYourHome } from './love-your-neighborhood-outgrowing-your-home'
+import { post as westDublinEightDaysDublinRanch29 } from './west-dublin-eight-days-dublin-ranch-29'
 
 export const allPosts: Post[] = [
   nationalHeadlinesTriValleySummer,
@@ -28,6 +29,7 @@ export const allPosts: Post[] = [
   downPaymentSurprise,
   lenderNumberIsntYourLoanBalance,
   loveYourNeighborhoodOutgrowingYourHome,
+  westDublinEightDaysDublinRanch29,
 ].sort((a, b) => b.date.localeCompare(a.date))
 
 // README §8: drafts NEVER appear in production builds.

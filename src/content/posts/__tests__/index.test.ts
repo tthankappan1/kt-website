@@ -78,7 +78,8 @@ describe('posts index', () => {
     expect(slugs).toContain('proximity-premium-san-jose')
     expect(slugs).toContain('two-markets-twenty-minutes')
     expect(slugs).toContain('lender-number-isnt-your-loan-balance')
-    expect(slugs[0]).toBe('love-your-neighborhood-outgrowing-your-home')
+    expect(slugs).toContain('love-your-neighborhood-outgrowing-your-home')
+    expect(slugs[0]).toBe('west-dublin-eight-days-dublin-ranch-29')
   })
 
   it('SHOW_DRAFTS=true (non-production) returns all posts', async () => {
