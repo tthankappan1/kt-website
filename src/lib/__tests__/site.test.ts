@@ -56,6 +56,8 @@ describe('site constants (PROJECT-STATUS locked decisions)', () => {
     expect(CONTACT_PHONE_DISPLAY).toBe('(408) 597-7371')
     expect(CONTACT_PHONE_TEL).toBe('+14085977371')
     expect(DRE).toBe('02254890')
-    expect(SITE_URL).toBe('https://kalyanithilak.com')
+    // www, not the apex: the apex 308s to www, so emitting apex canonicals
+    // pointed every metadata url at a redirect. Owner-approved 2026-07-27.
+    expect(SITE_URL).toBe('https://www.kalyanithilak.com')
   })
 })
