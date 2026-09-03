@@ -18,7 +18,7 @@ describe('MobileMenu', () => {
     expect(screen.getByRole('link', { name: 'About' }).getAttribute('href')).toBe('#about')
   })
 
-  it('Client Resources group is collapsed initially and expands with all 9 items', () => {
+  it('Client Resources group is collapsed initially and expands with all 10 items', () => {
     render(<MobileMenu onClose={() => {}} />)
     const groupBtn = screen.getByRole('button', { name: /client resources/i })
     expect(groupBtn.getAttribute('aria-expanded')).toBe('false')

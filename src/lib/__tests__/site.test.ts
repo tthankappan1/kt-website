@@ -13,8 +13,10 @@ import {
 // PROJECT-STATUS.md. A failure here means "renegotiate the spec with the
 // owner", not "update the test to match the code".
 describe('site constants (PROJECT-STATUS locked decisions)', () => {
-  it('has the 9 Client Resources items in locked order with production routes', () => {
+  it('has the 10 Client Resources items in locked order with production routes', () => {
+    // Listings added first 2026-09-03 (listings spec, owner-approved).
     expect(CLIENT_RESOURCES.map((r) => r.label)).toEqual([
+      'Listings',
       'Selling',
       'Buying',
       'Cost of Selling',
@@ -26,6 +28,7 @@ describe('site constants (PROJECT-STATUS locked decisions)', () => {
       "Buyer's Guide",
     ])
     expect(CLIENT_RESOURCES.map((r) => r.href)).toEqual([
+      '/listings',
       '/resources/selling',
       '/resources/buying',
       '/resources/cost-of-selling',

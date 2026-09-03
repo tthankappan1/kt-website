@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { SITE_URL } from '@/lib/site'
 import { RESOURCE_SLUGS } from '@/content/resources'
+import { LISTINGS, listingPath } from '@/content/listings'
 
 // ---- helpers ---------------------------------------------------------------
 
@@ -112,6 +113,20 @@ describe('sitemap()', () => {
     expect(posts.length).toBeGreaterThan(0)
     for (const post of posts) {
       expect(post.priority).toBe(0.7)
+    }
+  })
+
+  it('includes /listings and every listing page, dated by listedDate', async () => {
+    const entries = await loadSitemap()
+    const index = entries.find(e => e.url === `${SITE_URL}/listings`)
+    expect(index).toBeDefined()
+    expect(index!.priority).toBe(0.8)
+    expect(LISTINGS.length).toBeGreaterThan(0)
+    for (const l of LISTINGS) {
+      const entry = entries.find(e => e.url === `${SITE_URL}${listingPath(l.slug)}`)
+      expect(entry, l.slug).toBeDefined()
+      expect(entry!.lastModified).toEqual(new Date(l.listedDate))
+      expect(entry!.priority).toBe(0.8)
     }
   })
 
