@@ -19,12 +19,20 @@ describe('redirects()', () => {
     expect(sources).toContain('/home-guide/:slug')
   })
 
-  it('redirects legacy RealGeeks /listings/* URLs to the home page', async () => {
+  it('redirects legacy RealGeeks /listings/<section>/<name> URLs to the home page', async () => {
     const redirects = await loadRedirects()
-    const listings = redirects.find((r) => r.source === '/listings/:path*')
+    const listings = redirects.find((r) => r.source === '/listings/:section/:path+')
     expect(listings).toBeDefined()
     expect(listings!.destination).toBe('/')
     expect(listings!.permanent).toBe(true)
+  })
+
+  it('leaves our own /listings and /listings/<slug> routes alone (spec 2026-09-03)', async () => {
+    const redirects = await loadRedirects()
+    const sources = redirects.map((r) => r.source)
+    expect(sources).not.toContain('/listings/:path*')
+    expect(sources).not.toContain('/listings')
+    expect(sources).not.toContain('/listings/:slug')
   })
 
   it('redirects legacy RealGeeks /home-values/* URLs to /contact', async () => {

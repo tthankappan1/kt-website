@@ -7,6 +7,7 @@ const PAGES = [
   '/resources/intero-concierge', '/resources/schools', '/resources/market-updates',
   '/resources/buyers-guide',
   '/neighborhoods/alameda-county', '/neighborhoods/contra-costa-county',
+  '/listings', '/listings/553-covington-way-livermore',
   '/privacy',
 ]
 const ASSETS = ['/icon', '/apple-icon', '/opengraph-image', '/sitemap.xml', '/robots.txt',

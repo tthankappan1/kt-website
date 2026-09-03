@@ -52,7 +52,9 @@ const nextConfig: NextConfig = {
       // The domain's previous RealGeeks IDX site is still indexed by Google
       // (/listings/city/<City>, /listings/subdivision/<Name>, /home-values/…).
       // Land those stale visitors somewhere useful instead of the 404 page.
-      { source: '/listings/:path*', destination: '/', permanent: true },
+      // Legacy IDX URLs are all two+ segments deep; our own /listings and
+      // /listings/<slug> pages (spec 2026-09-03) are one segment and must resolve.
+      { source: '/listings/:section/:path+', destination: '/', permanent: true },
       { source: '/home-values/:path*', destination: '/contact', permanent: true },
     ]
   },

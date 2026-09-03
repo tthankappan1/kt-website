@@ -12,8 +12,10 @@ export const OFFICE_ADDRESS_LINES = ['187 S J Street', 'Livermore, CA 94550'] as
 
 export type ClientResource = { label: string; href: string }
 
-// Client Resources dropdown — 9 items, order locked (dropdown reads best last).
+// Client Resources dropdown — order locked (dropdown reads best last).
+// Listings added first 2026-09-03 (docs/superpowers/specs/2026-09-03-listings-design.md).
 export const CLIENT_RESOURCES: ClientResource[] = [
+  { label: 'Listings', href: '/listings' },
   { label: 'Selling', href: '/resources/selling' },
   { label: 'Buying', href: '/resources/buying' },
   { label: 'Cost of Selling', href: '/resources/cost-of-selling' },

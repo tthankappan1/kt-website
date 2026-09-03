@@ -36,14 +36,14 @@ describe('ResourcesDrop', () => {
     expect(container.querySelector('.kt-navdrop')?.classList.contains('open')).toBe(true)
   })
 
-  it('renders all 9 CLIENT_RESOURCES labels', () => {
+  it('renders all 10 CLIENT_RESOURCES labels', () => {
     render(<ResourcesDrop />)
     for (const item of CLIENT_RESOURCES) {
       expect(screen.getByText(item.label)).toBeInTheDocument()
     }
   })
 
-  it('renders all 9 CLIENT_RESOURCES with correct hrefs', () => {
+  it('renders all 10 CLIENT_RESOURCES with correct hrefs', () => {
     render(<ResourcesDrop />)
     for (const item of CLIENT_RESOURCES) {
       const link = screen.getByText(item.label).closest('a')

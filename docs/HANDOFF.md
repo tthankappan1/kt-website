@@ -85,6 +85,18 @@ _Shipped in PR #5, merged 2026-07-08; live at `/newsletter/lender-number-isnt-yo
 
 **Cross-repo follow-up (owner):** the mirrored contract update is up as **kt-content PR #12** (`feat/contract-donut-chart-kind`) — review/merge, then version-bump + tag per that repo's `RELEASING.md` so weekly generation learns the donut kind.
 
+## Listings section (September 2026)
+
+_Shipped on `feat/listings` 2026-09-03 for the launch of 553 Covington Way, Livermore ($890,000, 3/2, 1,130 sq ft) — replaces the photographer's Aryeo property site so listing traffic stays on kalyanithilak.com. Spec/plan: `docs/superpowers/specs/2026-09-03-listings-design.md`, `docs/superpowers/plans/2026-09-03-listings.md`._
+
+**What shipped:** `/listings` (dark hero, cards grouped by status, empty state) and `/listings/<slug>` (full-bleed photo hero with price + stat line + status-driven CTAs and open-house pill; MLS description + At-a-glance card + highlight chips; room-grouped gallery with a native `<dialog>` lightbox; floor plans; location band with a Google Maps link + neighborhood-guide link; charcoal inquiry block posting to `/api/lead` with the address in the message; listed-by compliance line; JSON-LD `RealEstateListing`; hero photo as the OG image). Content model `src/content/listings/` with a `status` lifecycle field. "Listings" is now the first Client Resources item (10). The legacy RealGeeks `/listings/*` redirect was narrowed to `/listings/:section/:path+`. Test count now **560**.
+
+**Publishing a listing:** add `src/content/listings/<slug>.ts` + one import line in `index.ts`, drop photos in `public/images/listings/<slug>/`, push. Price is a plain field — adjust and push. Marking pending/sold = edit `status` (+ `soldPrice`), push; sold listings stay live as social proof.
+
+**Owner follow-ups:** (1) the MLS description's "[1,250] square feet" placeholder was reconciled to the MLS field value 1,130 — confirm; (2) photos `25`/`26` carry the photographer's "Coming soon" sign rider — swap for sign-free originals when they arrive; (3) open-house dates go in `openHouses` (hero pill appears automatically); (4) MLS number goes in `mls` (adds an At-a-glance row).
+
+**Deferred:** home-page "Just listed" teaser, top-level nav link, video/3D tour, open-house RSVP, price history, moving photos off git to blob storage, index filters.
+
 ## Maintenance notes
 - Publish a post = add `src/content/posts/<slug>.ts` + one import line in `index.ts`, then push.
 - Brand rules + locked decisions live in `CLAUDE.md`. The `.kt-*` CSS in `globals.css` is a verbatim port of the design system — extend with net-new rules, don't restyle.

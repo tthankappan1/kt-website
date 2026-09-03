@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { SITE_URL } from '@/lib/site'
 import { getPublishedPosts } from '@/content/posts'
 import { RESOURCE_SLUGS } from '@/content/resources'
+import { getListings, listingPath } from '@/content/listings'
 
 // Fixed date literal — builds are deterministic regardless of deploy time.
 const LAST_MODIFIED = new Date('2026-06-12')
@@ -13,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: SITE_URL, lastModified: LAST_MODIFIED, changeFrequency: 'weekly', priority: 1 },
     { url: `${SITE_URL}/contact`, lastModified: LAST_MODIFIED, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${SITE_URL}/newsletter`, lastModified: LAST_MODIFIED, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${SITE_URL}/listings`, lastModified: LAST_MODIFIED, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${SITE_URL}/privacy`, lastModified: LAST_MODIFIED, changeFrequency: 'yearly', priority: 0.6 },
     {
       url: `${SITE_URL}/neighborhoods/alameda-county`,
@@ -42,5 +44,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...resourceRoutes, ...postRoutes]
+  // Listings stay in the sitemap after they sell (social proof), dated by list date.
+  const listingRoutes: MetadataRoute.Sitemap = getListings().map(l => ({
+    url: `${SITE_URL}${listingPath(l.slug)}`,
+    lastModified: new Date(l.listedDate),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+
+  return [...staticRoutes, ...resourceRoutes, ...listingRoutes, ...postRoutes]
 }
