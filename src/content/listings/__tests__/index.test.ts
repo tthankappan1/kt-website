@@ -158,3 +158,20 @@ describe('553 Covington Way facts (owner-supplied 2026-09-03)', () => {
     expect(text).toContain('1,130')
   })
 })
+
+describe('open houses', () => {
+  it('formats a label with weekday, short date and time range', async () => {
+    const { openHouseLabel, upcomingOpenHouses } = await import('@/content/listings')
+    expect(openHouseLabel({ date: '2026-09-05', start: '1:00 PM', end: '4:00 PM' })).toBe('Sat, Sep 5 · 1:00–4:00 PM')
+    expect(openHouseLabel({ date: '2026-09-06', start: '11:00 AM', end: '2:00 PM' })).toBe('Sun, Sep 6 · 11:00 AM–2:00 PM')
+    const l = fixture({
+      openHouses: [
+        { date: '2026-09-01', start: '1:00 PM', end: '4:00 PM' },
+        { date: '2026-09-06', start: '1:00 PM', end: '4:00 PM' },
+      ],
+    })
+    expect(upcomingOpenHouses(l, new Date('2026-09-05T12:00:00Z')).map((o) => o.date)).toEqual(['2026-09-06'])
+    expect(upcomingOpenHouses(l, new Date('2026-09-06T23:00:00Z'))).toHaveLength(1)
+    expect(upcomingOpenHouses(fixture({}), new Date())).toEqual([])
+  })
+})

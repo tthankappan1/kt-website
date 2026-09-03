@@ -1,4 +1,4 @@
-import type { Listing, ListingStatus, PhotoGroup } from './types'
+import type { Listing, ListingStatus, OpenHouse, PhotoGroup } from './types'
 import { covington553 } from './553-covington-way-livermore'
 
 export type { Listing, ListingStatus, ListingPhoto, PhotoGroup, OpenHouse } from './types'
@@ -90,4 +90,25 @@ export function heroLabel(l: Listing, today: Date = new Date()): string {
 export function mapsUrl(l: Listing): string {
   const q = l.mapsQuery ?? listingAddress(l)
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q)
+}
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+
+/** { date: '2026-09-06', start: '1:00 PM', end: '4:00 PM' } → 'Sat, Sep 6 · 1:00–4:00 PM' */
+export function openHouseLabel(oh: OpenHouse): string {
+  const [y, m, d] = oh.date.split('-').map(Number)
+  const weekday = WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]
+  const month = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })
+  const suffix = oh.end.match(/\s?[AP]M$/i)?.[0]
+  const start = suffix && oh.start.toUpperCase().endsWith(suffix.trim().toUpperCase())
+    ? oh.start.slice(0, oh.start.length - suffix.length)
+    : oh.start
+  return `${weekday}, ${month} ${d} · ${start}–${oh.end}`
+}
+
+// Open houses on or after today's date (UTC calendar day — pages are SSG, so
+// this resolves at build time; an open house drops off on the next deploy).
+export function upcomingOpenHouses(l: Listing, today: Date = new Date()): OpenHouse[] {
+  const iso = today.toISOString().slice(0, 10)
+  return (l.openHouses ?? []).filter((oh) => oh.date >= iso)
 }
