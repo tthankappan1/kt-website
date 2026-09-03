@@ -26,7 +26,7 @@ describe('/listings/[slug] route', () => {
     expect(meta.description).toContain('3 bd · 2 ba · 1,130 sq ft')
     expect(meta.alternates?.canonical).toBe('/listings/' + SLUG)
     const og = meta.openGraph as { images: { url: string; alt: string }[]; url: string; type: string }
-    expect(og.images[0].url).toBe('/images/listings/' + SLUG + '/26.jpg')
+    expect(og.images[0].url).toBe('/images/listings/' + SLUG + '/27.jpg')
     expect(og.images[0].alt).toBeTruthy()
     expect(og.url).toBe('https://www.kalyanithilak.com/listings/' + SLUG)
     expect((meta.twitter as { card: string }).card).toBe('summary_large_image')

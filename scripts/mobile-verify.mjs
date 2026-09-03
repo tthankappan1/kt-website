@@ -17,6 +17,8 @@ const ROUTES = [
   ['contra-costa', '/neighborhoods/contra-costa-county'],
   ['buying', '/resources/buying'],
   ['buyers-guide', '/resources/buyers-guide'],
+  ['listings', '/listings'],
+  ['listing', '/listings/553-covington-way-livermore'],
 ]
 const WIDTHS = [360, 390, 768]
 

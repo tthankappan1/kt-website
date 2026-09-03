@@ -44,6 +44,28 @@ Example: a post with `slug: "spring-2025-market-update"` uses `public/images/blo
 
 ---
 
+## Listings (`/listings/<slug>`)
+
+Photos live at `public/images/listings/<slug>/` and are referenced by file name from
+`src/content/listings/<slug>.ts` (`hero`, `photos[].file`, `floorPlans[].file`). Unlike
+newsletter figures, a missing listing photo **fails the test suite** — a listing never
+ships with a broken image.
+
+| File pattern | Where | Size / ratio | Notes |
+|---|---|---|---|
+| `01.jpg … NN.jpg` | Gallery tiles + lightbox; the one named in `hero` also fills the hero, the index card and the OG share image | 3:2 landscape, 2000px+ wide | Photographer order; alt text and room group live in the content file |
+| `floorplan-1.jpg`, `floorplan-2.jpg` | Floor plan section (shown `contain`, never cropped) | 4:3 | |
+
+**Replacing with the photographer's originals:** overwrite the files with the same names
+(keep JPEG, ≤ ~2500px wide keeps the repo sane; `next/image` serves optimized sizes), push.
+No content or code edits. To change the hero, edit `hero` in the content file.
+
+**553 Covington Way** (`553-covington-way-livermore/`): `01–27.jpg` from JOX Media's
+Aryeo site (2048px renditions, re-encoded q82), hero `27.jpg` (sign-free front elevation —
+`25`/`26` show the "Coming soon" rider). Swap `25`/`26` for sign-free originals when available.
+
+---
+
 ## Unused / not yet wired
 
 | File | Status |

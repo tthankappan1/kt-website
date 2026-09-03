@@ -43,7 +43,9 @@ export const covington553: Listing = {
     ['Offered', 'As-is · disclosures available on request'],
     ['HOA', 'None'],
   ],
-  hero: '26.jpg',
+  // 27 is the sign-free front elevation; 25/26 carry the photographer's
+  // "Coming soon" rider in frame, so they stay in the gallery, not the hero.
+  hero: '27.jpg',
   photos: [
     // Exterior
     { file: '27.jpg', alt: 'Front elevation with lawn, planting beds and the covered entry', group: 'exterior' },

@@ -80,7 +80,7 @@ describe('ListingJsonLd', () => {
     expect(data.about.floorSize.value).toBe(1130)
     expect(data.offers.price).toBe(890000)
     expect(data.offers.availability).toBe('https://schema.org/InStock')
-    expect(data.image).toContain('/images/listings/553-covington-way-livermore/26.jpg')
+    expect(data.image).toContain('/images/listings/553-covington-way-livermore/27.jpg')
   })
 
   it('marks sold listings SoldOut', () => {

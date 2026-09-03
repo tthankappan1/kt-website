@@ -22,8 +22,8 @@ describe('ListingHero', () => {
 
   it('uses the hero photo as a priority full-bleed image', () => {
     render(<ListingHero listing={base} today={TODAY} />)
-    const img = screen.getByRole('img', { name: /front of the home from the driveway/i })
-    expect(decodeURIComponent(img.getAttribute('src') ?? '')).toContain('/images/listings/553-covington-way-livermore/26.jpg')
+    const img = screen.getByRole('img', { name: /front elevation with lawn/i })
+    expect(decodeURIComponent(img.getAttribute('src') ?? '')).toContain('/images/listings/553-covington-way-livermore/27.jpg')
   })
 
   it('shows Just listed, the neighborhood, the price and the stat line', () => {

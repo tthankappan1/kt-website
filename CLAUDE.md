@@ -66,6 +66,17 @@ prototype). The production site recreates it 1:1. The build spec is
 - Photo slots: `public/images/<slot-id>.jpg` (ids in PHOTOS.md) rendered by
   `PhotoSlot` — filled → `next/image` cover-crop; absent → quiet brand frame,
   no placeholder text.
+- **Listings** (2026-09-03, spec `docs/superpowers/specs/2026-09-03-listings-design.md`):
+  `/listings` index + `/listings/<slug>` pages, both SSG. One typed TS file per
+  listing in `src/content/listings/` (+ import in `index.ts`); photos at
+  `public/images/listings/<slug>/` (see PHOTOS.md). `status`
+  (`coming-soon | active | pending | sold`) alone drives the lifecycle —
+  hero copy, card badge, index order, JSON-LD availability; marking sold =
+  edit `status` (+ `soldPrice`), push. "Listings" is the first Client
+  Resources item. The legacy RealGeeks redirect is `/listings/:section/:path+`
+  (two+ segments) so our one-segment pages resolve — never widen it back to
+  `/listings/:path*`. The inquiry form posts to `/api/lead` unchanged
+  (`intent: buying`, address-prefixed message, no newsletter flags).
 
 ## Content ingestion rules
 
